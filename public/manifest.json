@@ -1,0 +1,10 @@
+{
+  "name": "Axiom Vision",
+  "short_name": "Axiom Vision",
+  "description": "AI Edge Security Platform",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#05070a",
+  "theme_color": "#05070a",
+  "icons": []
+}
