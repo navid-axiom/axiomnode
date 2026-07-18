@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const sms = await client.messages.create({
       body: `AXIOM ${status.toUpperCase()}: ${message} (Source: ${nodeName})`,
       from: process.env.TWILIO_PHONE_NUMBER,
-      to: '+17372583742' // <-- CHANGE THIS TO YOUR VERIFIED CELL NUMBER
+      to: '+12132489788' // <-- CHANGE THIS TO YOUR VERIFIED CELL NUMBER
     });
 
     // Send a success response back to the node
