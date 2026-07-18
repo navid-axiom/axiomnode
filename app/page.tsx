@@ -1,16 +1,35 @@
-import { LoginForm } from "@/components/login-form";
+import { SignIn } from "@clerk/nextjs";
 
-export default function LoginPage() {
+export default function Home() {
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-40"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 20% 20%, rgba(34,211,238,0.15), transparent 40%), radial-gradient(circle at 80% 80%, rgba(59,130,246,0.15), transparent 40%)",
-        }}
-      />
-      <LoginForm />
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[#0a0f1c] p-24">
+      <div className="flex flex-col items-center space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-white mb-2">Axiom Vision</h1>
+          <p className="text-slate-400">Edge AI security. Sign in to your dashboard.</p>
+        </div>
+        
+        <SignIn 
+          fallbackRedirectUrl="/dashboard"
+          appearance={{
+            elements: {
+              formButtonPrimary: 
+                "bg-cyan-500 hover:bg-cyan-400 text-black font-bold",
+              card: "bg-slate-900 border border-slate-800 shadow-2xl",
+              headerTitle: "text-white",
+              headerSubtitle: "text-slate-400",
+              socialButtonsBlockButton: "text-white border-slate-700 hover:bg-slate-800",
+              socialButtonsBlockButtonText: "text-white font-semibold",
+              dividerLine: "bg-slate-700",
+              dividerText: "text-slate-400",
+              formFieldLabel: "text-slate-300",
+              formFieldInput: "bg-slate-800 border-slate-700 text-white",
+              footerActionText: "text-slate-400",
+              footerActionLink: "text-cyan-500 hover:text-cyan-400"
+            }
+          }}
+        />
+      </div>
     </main>
   );
 }
