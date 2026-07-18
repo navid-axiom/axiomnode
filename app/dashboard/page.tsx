@@ -7,4 +7,4 @@ import { Video, Shield } from "lucide-react";
 
 export default function DashboardPage() {
   const onlineCount = mockNodes.filter((n) => n.status === "online").length;
-  const totalCameras = mockNodes.reduce((sum, n) => sum + n.came…(truncated)
+  const totalCameras = 0;
