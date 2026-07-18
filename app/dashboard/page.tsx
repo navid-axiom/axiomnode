@@ -1,10 +1,7 @@
-import { DashboardHeader } from "@/components/dashboard-header";
-import { NodeStatusCard } from "@/components/node-status-card";
-import { AlertsFeed } from "@/components/alerts-feed";
-import { mockNodes } from "@/lib/mock-data";
-import { getAlerts } from "@/lib/store";
-import { Video, Shield } from "lucide-react";
-
 export default function DashboardPage() {
-  const onlineCount = mockNodes.filter((n) => n.status === "online").length;
-  const totalCameras = 0;
+  return (
+    <div style={{ padding: '20px' }}>
+      <h1>Axiom Dashboard is Live</h1>
+    </div>
+  );
+}
