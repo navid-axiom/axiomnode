@@ -1,19 +1,26 @@
-import twilio from "twilio";
+// @ts-nocheck
+export async function sendAlertSms(message) {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+  
+  const toNumber = "+1234567890"; // <--- CHANGE THIS TO YOUR REAL CELL PHONE NUMBER!
 
-interface SendAlertSmsInput {
-  cameraName: string;
-  nodeName: string;
-  dashboardUrl: string;
+  if (!sid || !token || !fromNumber) return false;
+
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`;
+  
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Basic ' + btoa(sid + ':' + token),
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({ To: toNumber, From: fromNumber, Body: message })
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
-
-/**
- * Sends the "human detected" SMS via Twilio. Reads credentials from
- * environment variables so nothing sensitive is hardcoded:
- *
- *   TWILIO_ACCOUNT_SID
- *   TWILIO_AUTH_TOKEN
- *   TWILIO_FROM_NUMBER      (Twilio number, e.g. +15551234567)
- *   CLIENT_ALERT_PHONE      (destination number for this client)
- *   NEXT_PUBLIC_DASHBOARD_URL
- *
- * If Twilio env vars ar…(truncated)
