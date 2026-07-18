@@ -20,7 +20,7 @@ export default function DashboardPage() {
           <span className="text-xs px-2 py-1 bg-cyan-950 text-cyan-400 border border-cyan-800 rounded font-mono">
             V1 LIVE
           </span>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
       </nav>
 
