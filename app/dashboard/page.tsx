@@ -1,93 +1,121 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
+import { createClient } from "@supabase/supabase-js";
+
+// Initialize Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function DashboardPage() {
-  // Mock data for the alerts feed - we will wire this to your database/Twilio later
-  const mockAlerts = [
-    { id: 1, time: "11:24 AM", status: "Critical", message: "Motion detected on Camera Node 01" },
-    { id: 2, time: "10:15 AM", status: "Info", message: "Camera Node 01 successfully connected to edge" },
-    { id: 3, time: "09:00 AM", status: "System", message: "Axiom Monitoring Service initialized" },
-  ];
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Function to pull the latest logs
+  const fetchAlerts = async () => {
+    const { data, error } = await supabase
+      .from('alerts')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+      
+    if (data) {
+      setAlerts(data);
+    }
+    setLoading(false);
+  };
+
+  // Run immediately, then poll every 5 seconds
+  useEffect(() => {
+    fetchAlerts();
+    const interval = setInterval(fetchAlerts, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0f1c] text-white">
+    <div className="min-h-screen bg-[#0a0f1c] text-white flex flex-col">
       {/* Top Navigation Bar */}
-      <nav className="border-b border-slate-800 bg-[#0d1527] px-6 py-4 flex items-center justify-between">
+      <nav className="border-b border-slate-800 bg-[#0d1527] px-6 py-4 flex items-center justify-between shadow-md">
         <div className="flex items-center space-x-3">
-          <div className="h-3 w-3 rounded-full bg-cyan-500 animate-pulse" />
-          <span className="text-xl font-bold tracking-wider text-white">AXIOM NODE</span>
+          <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.7)]" />
+          <span className="text-xl font-bold tracking-wider text-white">AXIOM SYSTEM</span>
         </div>
         <div className="flex items-center space-x-4">
           <span className="text-xs px-2 py-1 bg-cyan-950 text-cyan-400 border border-cyan-800 rounded font-mono">
-            V1 LIVE
+            SECURE LINK ACTIVE
           </span>
           <UserButton />
         </div>
       </nav>
 
       {/* Main Content Dashboard */}
-      <main className="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <main className="p-6 max-w-5xl mx-auto w-full flex-1 flex flex-col gap-6">
         
-        {/* Left 2 Columns: Camera & Controls */}
-        <div className="lg:col-span-2 space-y-6">
-          
-          {/* Camera Feed Container */}
-          <div className="border border-slate-800 bg-[#0d1527] rounded-xl overflow-hidden shadow-2xl">
-            <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-[#0f192e]">
-              <h2 className="font-semibold text-slate-200">Live Camera Stream</h2>
-              <span className="text-xs bg-red-950 text-red-400 border border-red-800 px-2 py-0.5 rounded flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-ping" />
-                LIVE NODE_01
-              </span>
-            </div>
-            
-            {/* Camera Video Placeholder */}
-            <div className="aspect-video bg-slate-950 flex flex-col items-center justify-center relative group p-4 text-center">
-              <div className="p-4 rounded-full bg-slate-900 border border-slate-800 mb-3 text-cyan-400">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
-                </svg>
-              </div>
-              <p className="text-slate-400 font-medium">Camera Feed Connection Pending</p>
-              <p className="text-xs text-slate-500 max-w-sm mt-1">Ready to link edge camera stream via secure API pipeline.</p>
-            </div>
+        {/* System Health Indicators */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-5 border border-slate-800 bg-[#0d1527] rounded-xl shadow-lg">
+            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Alerts Logged</p>
+            <p className="text-3xl font-bold text-white mt-2">{alerts.length}</p>
           </div>
-
-          {/* Quick Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 border border-slate-800 bg-[#0d1527] rounded-xl">
-              <p className="text-xs text-slate-400 font-medium">SMS Alert Routing</p>
-              <p className="text-lg font-semibold text-cyan-400 mt-1">Twilio Sandbox Active</p>
-            </div>
-            <div className="p-4 border border-slate-800 bg-[#0d1527] rounded-xl">
-              <p className="text-xs text-slate-400 font-medium">Node Security Status</p>
-              <p className="text-lg font-semibold text-emerald-400 mt-1">Monitoring Armed</p>
-            </div>
+          <div className="p-5 border border-slate-800 bg-[#0d1527] rounded-xl shadow-lg">
+            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">SMS Routing</p>
+            <p className="text-lg font-semibold text-cyan-400 mt-2 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-cyan-400"></span> Twilio Connected
+            </p>
+          </div>
+          <div className="p-5 border border-slate-800 bg-[#0d1527] rounded-xl shadow-lg">
+            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Database Status</p>
+            <p className="text-lg font-semibold text-emerald-400 mt-2 flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-emerald-400"></span> Supabase Synced
+            </p>
           </div>
         </div>
 
-        {/* Right 1 Column: Real-time Alerts Feed */}
-        <div className="border border-slate-800 bg-[#0d1527] rounded-xl overflow-hidden shadow-2xl flex flex-col h-full">
-          <div className="p-4 border-b border-slate-800 bg-[#0f192e]">
-            <h2 className="font-semibold text-slate-200">Activity Log</h2>
+        {/* Real-time Alerts Feed */}
+        <div className="border border-slate-800 bg-[#0d1527] rounded-xl shadow-2xl flex flex-col flex-1 overflow-hidden">
+          <div className="p-5 border-b border-slate-800 bg-[#0f192e] flex justify-between items-center">
+            <h2 className="font-semibold text-slate-200 text-lg">Live Activity Log</h2>
+            {loading && <span className="text-xs text-slate-500 animate-pulse">Syncing...</span>}
           </div>
           
-          <div className="p-4 divide-y divide-slate-800 flex-1 overflow-y-auto space-y-4">
-            {mockAlerts.map((alert) => (
-              <div key={alert.id} className="pt-3 first:pt-0 flex flex-col space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className={`font-mono px-1.5 py-0.5 rounded font-bold ${
-                    alert.status === 'Critical' ? 'bg-red-950 text-red-400 border border-red-900' :
-                    alert.status === 'System' ? 'bg-cyan-950 text-cyan-400 border border-cyan-900' :
-                    'bg-slate-800 text-slate-400'
-                  }`}>
-                    {alert.status}
-                  </span>
-                  <span className="text-slate-500 font-mono">{alert.time}</span>
-                </div>
-                <p className="text-sm text-slate-300 font-medium">{alert.message}</p>
+          <div className="p-2 flex-1 overflow-y-auto bg-[#0a0f1c]">
+            {alerts.length === 0 && !loading ? (
+              <div className="h-full flex flex-col items-center justify-center text-slate-500 py-20">
+                <p>System armed. Waiting for incoming events...</p>
               </div>
-            ))}
+            ) : (
+              <div className="divide-y divide-slate-800/50">
+                {alerts.map((alert) => {
+                  const date = new Date(alert.created_at);
+                  const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                  const dateString = date.toLocaleDateString();
+                  
+                  return (
+                    <div key={alert.id} className="p-4 hover:bg-[#0f192e] transition-colors duration-150">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-3">
+                          <span className={`font-mono text-[10px] uppercase px-2 py-1 rounded font-bold ${
+                            alert.status === 'Critical' ? 'bg-red-950/50 text-red-400 border border-red-900' :
+                            'bg-cyan-950/50 text-cyan-400 border border-cyan-900'
+                          }`}>
+                            {alert.status}
+                          </span>
+                          <span className="text-slate-300 font-mono text-sm bg-slate-800/50 px-2 py-0.5 rounded border border-slate-700/50">
+                            {alert.node_name}
+                          </span>
+                        </div>
+                        <span className="text-slate-500 font-mono text-xs">
+                          {dateString} <span className="text-slate-400 ml-1">{timeString}</span>
+                        </span>
+                      </div>
+                      <p className="text-slate-200 font-medium mt-1">{alert.message}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
