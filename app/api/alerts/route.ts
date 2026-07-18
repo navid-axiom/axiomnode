@@ -9,15 +9,16 @@ const client = twilio(
 
 export async function POST(request: Request) {
   try {
-    // Read the incoming alert data from the Linux node
     const body = await request.json();
     const { status, message, nodeName } = body;
 
     // Trigger the SMS text message
     const sms = await client.messages.create({
-      body: `AXIOM ${status.toUpperCase()}: ${message} (Source: ${nodeName})`,
+      // TWILIO FREE TRIAL RESTRICTION: We must use a predefined template keyword.
+      // Once you upgrade the Twilio account, you can change this back to your custom AXIOM text.
+      body: 'sms_account_alerts', 
       from: process.env.TWILIO_PHONE_NUMBER,
-      to: '+12132489788' // <-- CHANGE THIS TO YOUR VERIFIED CELL NUMBER
+      to: '+12132489788' // <-- PUT YOUR VERIFIED CELL NUMBER HERE AGAIN
     });
 
     // Send a success response back to the node
