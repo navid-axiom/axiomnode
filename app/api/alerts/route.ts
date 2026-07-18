@@ -17,4 +17,4 @@ interface AlertWebhookBody {
  * Recent Alerts feed.
  */
 export async function GET() {
-  return NextResponse.json(…(truncated)
+  return NextResponse.json([]);
