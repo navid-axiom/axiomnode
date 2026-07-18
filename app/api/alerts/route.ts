@@ -1,21 +1,36 @@
-import { NextResponse } from "next/server";
-import { addAlert, getAlerts } from "@/lib/store";
-import { sendAlertSms } from "@/lib/twilio";
+import { NextResponse } from 'next/server';
+import twilio from 'twilio';
 
-interface AlertWebhookBody {
-  timestamp?: string;
-  cameraName?: string;
-  nodeId?: string;
-  nodeName?: string;
-  imageUrl?: string;
-  severity?: "human" | "vehicle" | "unknown";
-}
+// Initialize the Twilio client using Vercel Environment Variables
+const client = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
-/**
- * GET /api/alerts
- * Returns all stored alerts, newest first. Used by the dashboard's
- * Recent Alerts feed.
- */
-export async function GET() {
-  return NextResponse.json([]);
+export async function POST(request: Request) {
+  try {
+    // Read the incoming alert data from the Linux node
+    const body = await request.json();
+    const { status, message, nodeName } = body;
+
+    // Trigger the SMS text message
+    const sms = await client.messages.create({
+      body: `AXIOM ${status.toUpperCase()}: ${message} (Source: ${nodeName})`,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: '+12132489788' // <-- CHANGE THIS TO YOUR VERIFIED CELL NUMBER
+    });
+
+    // Send a success response back to the node
+    return NextResponse.json({ 
+      success: true, 
+      messageId: sms.sid 
+    });
+
+  } catch (error) {
+    console.error('Alert Error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to process alert and send SMS' }, 
+      { status: 500 }
+    );
+  }
 }
