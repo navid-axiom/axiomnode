@@ -41,7 +41,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0f1c] text-white flex flex-col font-sans">
-      {}
+      {/* Top Navbar */}
       <nav className="border-b border-slate-800 bg-[#0d1527] px-6 py-4 flex items-center justify-between shadow-md">
         <div className="flex items-center space-x-3">
           <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.7)]" />
@@ -55,9 +55,10 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      {}
+      {/* Main Container */}
       <main className="p-6 max-w-5xl mx-auto w-full flex-1 flex flex-col gap-6">
         
+        {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-5 border border-slate-800 bg-[#0d1527] rounded-xl shadow-lg">
             <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Alerts Logged</p>
@@ -80,7 +81,7 @@ export default function DashboardPage() {
         {}
         <div className="border border-slate-800 bg-[#0d1527] rounded-xl shadow-2xl flex flex-col flex-1 overflow-hidden">
           <div className="p-5 border-b border-slate-800 bg-[#0f192e] flex justify-between items-center">
-            <h2 className="font-semibold text-slate-200 text-lg">Live Activity Log & SMS History</h2>
+            <h2 className="font-semibold text-slate-200 text-lg">Live Activity Log & Incident Media</h2>
             {loading && <span className="text-xs text-slate-400 animate-pulse font-mono">Syncing database...</span>}
           </div>
           
@@ -97,7 +98,7 @@ export default function DashboardPage() {
                   const dateString = date.toLocaleDateString();
                   const alertAnchorId = `alert-${alert.id}`;
                   const incidentUrl = typeof window !== 'undefined' ? `${window.location.origin}/dashboard#${alertAnchorId}` : '#';
-                  const smsBodyText = `[AXIOM ALERT] ${alert.status === 'Critical' ? '🚨 THREAT DETECTED' : '⚠️ WARNING'}: ${alert.message} | Camera: ${alert.node_name}. View details: ${incidentUrl}`;
+                  const smsBodyText = `[AXIOM ALERT] ${alert.status === 'Critical' ? '🚨 THREAT DETECTED' : '⚠️ WARNING'}: ${alert.message} | Camera: ${alert.node_name}. View video & details: ${incidentUrl}`;
 
                   return (
                     <div 
@@ -126,7 +127,7 @@ export default function DashboardPage() {
                       {/* Main Message */}
                       <p className="text-slate-100 font-medium text-lg my-2">{alert.message}</p>
 
-                      {}
+                      {/* Dispatched SMS Text Box & Link Copy */}
                       <div className="mt-4 p-3.5 bg-[#070c18] border border-cyan-950 rounded-lg flex flex-col gap-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] uppercase font-mono tracking-wider text-cyan-400 flex items-center gap-1.5">
@@ -158,21 +159,39 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      {}
-                      {alert.screenshot && (
+                      {/* Incident Evidence Container: Video Player & Snapshot Keyframe */}
+                      {(alert.video_url || alert.screenshot) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-[#0d1527] rounded-xl border border-slate-800/80">
-                          <div>
-                            <p className="text-xs uppercase font-mono tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
-                              <span className="h-1.5 w-1.5 rounded-full bg-red-500"></span>
-                              Threat Keyframe Capture
-                            </p>
-                            <img 
-                              src={`data:image/jpeg;base64,${alert.screenshot}`} 
-                              alt="Security incident keyframe" 
-                              className="rounded-lg border border-slate-800 max-h-64 object-cover w-full shadow-md"
-                            />
-                          </div>
+                          
+                          {/* Playable HD Video Player */}
+                          {alert.video_url ? (
+                            <div>
+                              <p className="text-xs uppercase font-mono tracking-wider text-cyan-400 mb-2 flex items-center gap-1.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                                10-Second HD Threat Video Clip
+                              </p>
+                              <video 
+                                src={alert.video_url} 
+                                controls 
+                                preload="metadata"
+                                className="rounded-lg border border-slate-800 max-h-64 w-full bg-black shadow-md object-contain"
+                              />
+                            </div>
+                          ) : alert.screenshot ? (
+                            <div>
+                              <p className="text-xs uppercase font-mono tracking-wider text-slate-400 mb-2 flex items-center gap-1.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                                Threat Keyframe Snapshot
+                              </p>
+                              <img 
+                                src={`data:image/jpeg;base64,${alert.screenshot}`} 
+                                alt="Security incident keyframe" 
+                                className="rounded-lg border border-slate-800 max-h-64 object-cover w-full shadow-md"
+                              />
+                            </div>
+                          ) : null}
 
+                          {/* Law Enforcement Structured Details */}
                           {alert.suspect_description && (
                             <div className="flex flex-col gap-2.5">
                               <p className="text-xs uppercase font-mono tracking-wider text-slate-400 mb-0.5">Law Enforcement Log Details</p>
