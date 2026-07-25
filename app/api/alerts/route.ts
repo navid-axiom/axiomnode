@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ttannkgwihjjutfkasxu.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN || '';
-const telegramChatId = process.env.TELEGRAM_CHAT_ID || '';
+// Central hardcoded fallback token to ensure messages are delivered even if Vercel ENV is missing
+const HARDCODED_TELEGRAM_BOT_TOKEN = '8736943518:AAF-gyrp3nJMV2zZRpbykevysSIzCPtvaI4';
 
 async function sendTelegramAlert(payload: {
   status: string;
@@ -14,9 +14,13 @@ async function sendTelegramAlert(payload: {
   video_url?: string | null;
   suspect_description?: any;
   alertId?: string | number;
+  telegramChatId?: string | null;
 }) {
-  if (!telegramBotToken || !telegramChatId) {
-    console.warn('Telegram Bot Token or Chat ID missing in environment variables. Skipping Telegram alert.');
+  const token = process.env.TELEGRAM_BOT_TOKEN || HARDCODED_TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID || payload.telegramChatId;
+
+  if (!token || !chatId) {
+    console.warn('⚠️ [TELEGRAM WARNING] Telegram Bot Token or Chat ID missing. Skipping dispatch.');
     return;
   }
 
@@ -45,12 +49,12 @@ async function sendTelegramAlert(payload: {
   text += `🔗 <a href="${incidentUrl}">Open Axiom Security Dashboard</a>`;
 
   try {
-    const tgEndpoint = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
+    const tgEndpoint = `https://api.telegram.org/bot${token}/sendMessage`;
     const res = await fetch(tgEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: telegramChatId,
+        chat_id: chatId,
         text: text,
         parse_mode: 'HTML',
         disable_web_page_preview: false
@@ -61,7 +65,7 @@ async function sendTelegramAlert(payload: {
     if (tgData.ok) {
       console.log('✈️ [TELEGRAM DISPATCH SUCCESS] Alert delivered to chat.');
     } else {
-      console.warn('Telegram API returned error:', tgData);
+      console.warn('Telegram API error:', tgData);
     }
   } catch (err: any) {
     console.error('Failed to send Telegram dispatch:', err?.message || err);
@@ -71,7 +75,7 @@ async function sendTelegramAlert(payload: {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { status, message, nodeName, screenshot, video_url, suspect_description } = body;
+    const { status, message, nodeName, screenshot, video_url, suspect_description, telegramChatId } = body;
 
     let savedAlertId: string | number | undefined = undefined;
 
@@ -95,7 +99,7 @@ export async function POST(request: Request) {
       }
 
       if (dbError) {
-        console.warn('Rich insert warning, attempting fallback minimal insert:', dbError.message);
+        console.warn('Full insert failed, running fallback minimal insert:', dbError.message);
         const { data: fbData } = await supabase
           .from('alerts')
           .insert([{ 
@@ -109,7 +113,7 @@ export async function POST(request: Request) {
         }
       }
     } else {
-      console.warn('Supabase URL/Key missing in Vercel environment variables.');
+      console.warn('Supabase Key or URL missing in Vercel environment.');
     }
 
     await sendTelegramAlert({
@@ -118,7 +122,8 @@ export async function POST(request: Request) {
       nodeName: nodeName || 'cam-01',
       video_url,
       suspect_description,
-      alertId: savedAlertId
+      alertId: savedAlertId,
+      telegramChatId
     });
 
     return NextResponse.json({ success: true, message: 'Alert processed and dispatched to Telegram' });
