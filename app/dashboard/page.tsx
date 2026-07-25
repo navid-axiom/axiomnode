@@ -58,16 +58,16 @@ export default function DashboardPage() {
       {/* Main Container */}
       <main className="p-6 max-w-5xl mx-auto w-full flex-1 flex flex-col gap-6">
         
-        {/* Metric Cards */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-5 border border-slate-800 bg-[#0d1527] rounded-xl shadow-lg">
             <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Alerts Logged</p>
             <p className="text-3xl font-bold text-white mt-2">{alerts.length}</p>
           </div>
           <div className="p-5 border border-slate-800 bg-[#0d1527] rounded-xl shadow-lg">
-            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">SMS Dispatch Router</p>
+            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Instant Dispatch Router</p>
             <p className="text-lg font-semibold text-cyan-400 mt-2 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping"></span> Twilio Connected
+              <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping"></span> Telegram Bot Active
             </p>
           </div>
           <div className="p-5 border border-slate-800 bg-[#0d1527] rounded-xl shadow-lg">
@@ -98,7 +98,8 @@ export default function DashboardPage() {
                   const dateString = date.toLocaleDateString();
                   const alertAnchorId = `alert-${alert.id}`;
                   const incidentUrl = typeof window !== 'undefined' ? `${window.location.origin}/dashboard#${alertAnchorId}` : '#';
-                  const smsBodyText = `[AXIOM ALERT] ${alert.status === 'Critical' ? '🚨 THREAT DETECTED' : '⚠️ WARNING'}: ${alert.message} | Camera: ${alert.node_name}. View video & details: ${incidentUrl}`;
+                  
+                  const telegramPayloadText = `🚨 [AXIOM THREAT] ${alert.status === 'Critical' ? 'THREAT DETECTED' : 'WARNING'}: ${alert.message} | Camera: ${alert.node_name}. View Video & Details: ${incidentUrl}`;
 
                   return (
                     <div 
@@ -127,14 +128,14 @@ export default function DashboardPage() {
                       {/* Main Message */}
                       <p className="text-slate-100 font-medium text-lg my-2">{alert.message}</p>
 
-                      {/* Dispatched SMS Text Box & Link Copy */}
+                      {}
                       <div className="mt-4 p-3.5 bg-[#070c18] border border-cyan-950 rounded-lg flex flex-col gap-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] uppercase font-mono tracking-wider text-cyan-400 flex items-center gap-1.5">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .54-1.42.53-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.07-.75 4.19-1.82 6.99-3.02 8.4-3.6 3.99-1.66 4.82-1.95 5.36-1.96.12 0 .38.03.55.17.14.12.18.28.2.45-.01.07.01.21 0 .28z"/>
                             </svg>
-                            Dispatched SMS Notification Payload
+                            Dispatched Telegram Alert Payload
                           </span>
 
                           <button
@@ -155,7 +156,7 @@ export default function DashboardPage() {
                         </div>
 
                         <div className="bg-[#050812] p-2.5 rounded border border-slate-850 font-mono text-xs text-slate-300 select-all leading-relaxed break-all">
-                          {smsBodyText}
+                          {telegramPayloadText}
                         </div>
                       </div>
 
@@ -163,7 +164,7 @@ export default function DashboardPage() {
                       {(alert.video_url || alert.screenshot) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-[#0d1527] rounded-xl border border-slate-800/80">
                           
-                          {/* Playable HD Video Player with Keyframe Poster */}
+                          {}
                           {alert.video_url ? (
                             <div>
                               <p className="text-xs uppercase font-mono tracking-wider text-cyan-400 mb-2 flex items-center gap-1.5">
