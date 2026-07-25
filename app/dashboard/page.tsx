@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ttannkgwihjjutfkasxu.supabase.co';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function DashboardPage() {
@@ -14,7 +14,7 @@ export default function DashboardPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchAlerts = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('alerts')
       .select('*')
       .order('created_at', { ascending: false })
@@ -58,7 +58,7 @@ export default function DashboardPage() {
       {/* Main Container */}
       <main className="p-6 max-w-5xl mx-auto w-full flex-1 flex flex-col gap-6">
         
-        {}
+        {/* Metric Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-5 border border-slate-800 bg-[#0d1527] rounded-xl shadow-lg">
             <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Total Alerts Logged</p>
@@ -78,7 +78,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {}
+        {/* Real-time Activity Feed */}
         <div className="border border-slate-800 bg-[#0d1527] rounded-xl shadow-2xl flex flex-col flex-1 overflow-hidden">
           <div className="p-5 border-b border-slate-800 bg-[#0f192e] flex justify-between items-center">
             <h2 className="font-semibold text-slate-200 text-lg">Live Activity Log & Incident Media</h2>
@@ -128,20 +128,16 @@ export default function DashboardPage() {
                       {/* Main Message */}
                       <p className="text-slate-100 font-medium text-lg my-2">{alert.message}</p>
 
-                      {}
+                      {/* Telegram Notification Payload Card */}
                       <div className="mt-4 p-3.5 bg-[#070c18] border border-cyan-950 rounded-lg flex flex-col gap-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[11px] uppercase font-mono tracking-wider text-cyan-400 flex items-center gap-1.5">
-                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .54-1.42.53-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.38-.49 1.07-.75 4.19-1.82 6.99-3.02 8.4-3.6 3.99-1.66 4.82-1.95 5.36-1.96.12 0 .38.03.55.17.14.12.18.28.2.45-.01.07.01.21 0 .28z"/>
-                            </svg>
                             Dispatched Telegram Alert Payload
                           </span>
 
                           <button
                             onClick={() => handleCopyLink(alert.id)}
                             className="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5 font-mono"
-                            title="Copy direct link to clipboard"
                           >
                             {copiedId === alert.id ? (
                               <span className="text-emerald-400 flex items-center gap-1">
@@ -160,11 +156,10 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      {/* Incident Evidence Container: Video Player & Snapshot Keyframe */}
+                      {/* Incident Media Container: Video Player & Snapshot Keyframe */}
                       {(alert.video_url || alert.screenshot) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-[#0d1527] rounded-xl border border-slate-800/80">
                           
-                          {}
                           {alert.video_url ? (
                             <div>
                               <p className="text-xs uppercase font-mono tracking-wider text-cyan-400 mb-2 flex items-center gap-1.5">
