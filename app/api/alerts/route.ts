@@ -53,7 +53,7 @@ export async function POST(request: Request) {
         await twilioClient.messages.create({
           body: 'sms_account_alerts', 
           from: process.env.TWILIO_PHONE_NUMBER,
-          to: '+14805551234'
+          to: '+16027371373'
         });
         console.log('Twilio SMS sent successfully.');
       }
