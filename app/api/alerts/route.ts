@@ -13,12 +13,11 @@ async function sendTelegramAlert(payload: {
   alertId?: string | number;
   telegramChatId?: string | null;
 }) {
-  // Pull keys exclusively from environment variables to prevent GitHub secret exposure
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID || payload.telegramChatId;
 
   if (!token || !chatId) {
-    console.warn('⚠️ [TELEGRAM WARNING] Telegram Bot Token or Chat ID missing in environment. Skipping dispatch.');
+    console.warn('⚠️ [TELEGRAM WARNING] Bot Token or Chat ID missing in environment. Skipping dispatch.');
     return;
   }
 
@@ -61,9 +60,9 @@ async function sendTelegramAlert(payload: {
 
     const tgData = await res.json();
     if (tgData.ok) {
-      console.log('✈️ [TELEGRAM DISPATCH SUCCESS] Alert delivered to chat.');
+      console.log('✈️ [TELEGRAM DISPATCH SUCCESS] Alert delivered to Telegram chat ID:', chatId);
     } else {
-      console.warn('Telegram API error:', tgData);
+      console.warn('⚠️ Telegram API returned error:', tgData);
     }
   } catch (err: any) {
     console.error('Failed to send Telegram dispatch:', err?.message || err);
@@ -75,8 +74,19 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { status, message, nodeName, screenshot, video_url, suspect_description, telegramChatId } = body;
 
+    // 1. Dispatch Telegram alert IMMEDIATELY so it never blocks or times out
+    const telegramPromise = sendTelegramAlert({
+      status: status || 'Warning',
+      message: message || 'Threat detected',
+      nodeName: nodeName || 'cam-01',
+      video_url,
+      suspect_description,
+      telegramChatId
+    });
+
     let savedAlertId: string | number | undefined = undefined;
 
+    // 2. Save alert record to Supabase
     if (supabaseUrl && supabaseKey) {
       const supabase = createClient(supabaseUrl, supabaseKey);
       
@@ -98,31 +108,18 @@ export async function POST(request: Request) {
 
       if (dbError) {
         console.warn('Full insert failed, running fallback minimal insert:', dbError.message);
-        const { data: fbData } = await supabase
+        await supabase
           .from('alerts')
           .insert([{ 
             status: status || 'Warning', 
             message: message || 'Threat detected', 
             node_name: nodeName || 'cam-01'
-          }])
-          .select();
-        if (fbData && fbData.length > 0) {
-          savedAlertId = fbData[0].id;
-        }
+          }]);
       }
-    } else {
-      console.warn('Supabase Key or URL missing in Vercel environment.');
     }
 
-    await sendTelegramAlert({
-      status: status || 'Warning',
-      message: message || 'Threat detected',
-      nodeName: nodeName || 'cam-01',
-      video_url,
-      suspect_description,
-      alertId: savedAlertId,
-      telegramChatId
-    });
+    // Await Telegram response before returning HTTP 200
+    await telegramPromise;
 
     return NextResponse.json({ success: true, message: 'Alert processed and dispatched to Telegram' });
 
