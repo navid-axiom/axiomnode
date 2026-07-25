@@ -4,9 +4,6 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://ttannkgwihjjutfkasxu.supabase.co';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Central hardcoded fallback token to ensure messages are delivered even if Vercel ENV is missing
-const HARDCODED_TELEGRAM_BOT_TOKEN = '8736943518:AAF-gyrp3nJMV2zZRpbykevysSIzCPtvaI4';
-
 async function sendTelegramAlert(payload: {
   status: string;
   message: string;
@@ -16,11 +13,12 @@ async function sendTelegramAlert(payload: {
   alertId?: string | number;
   telegramChatId?: string | null;
 }) {
-  const token = process.env.TELEGRAM_BOT_TOKEN || HARDCODED_TELEGRAM_BOT_TOKEN;
+  // Pull keys exclusively from environment variables to prevent GitHub secret exposure
+  const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID || payload.telegramChatId;
 
   if (!token || !chatId) {
-    console.warn('⚠️ [TELEGRAM WARNING] Telegram Bot Token or Chat ID missing. Skipping dispatch.');
+    console.warn('⚠️ [TELEGRAM WARNING] Telegram Bot Token or Chat ID missing in environment. Skipping dispatch.');
     return;
   }
 
