@@ -14,11 +14,14 @@ async function sendTelegramAlert(payload: {
   telegramChatId?: string | null;
 }) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID || payload.telegramChatId;
+  const chatId = process.env.TELEGRAM_CHAT_ID || payload.telegramChatId || '8895074682';
 
-  if (!token || !chatId) {
-    console.warn('⚠️ [TELEGRAM WARNING] Bot Token or Chat ID missing in environment. Skipping dispatch.');
-    return;
+  if (!token) {
+    console.warn('⚠️ [TELEGRAM WARNING] Bot Token missing in environment.');
+    return { 
+      success: false, 
+      error: 'TELEGRAM_BOT_TOKEN environment variable is missing in Vercel settings.' 
+    };
   }
 
   const hostUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://axiomnode-seven.vercel.app';
@@ -61,11 +64,14 @@ async function sendTelegramAlert(payload: {
     const tgData = await res.json();
     if (tgData.ok) {
       console.log('✈️ [TELEGRAM DISPATCH SUCCESS] Alert delivered to Telegram chat ID:', chatId);
+      return { success: true, chatId, messageId: tgData.result?.message_id };
     } else {
       console.warn('⚠️ Telegram API returned error:', tgData);
+      return { success: false, error: tgData.description || 'Telegram API rejected request' };
     }
   } catch (err: any) {
     console.error('Failed to send Telegram dispatch:', err?.message || err);
+    return { success: false, error: err?.message || 'Network error communicating with Telegram' };
   }
 }
 
@@ -74,8 +80,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { status, message, nodeName, screenshot, video_url, suspect_description, telegramChatId } = body;
 
-    // 1. Dispatch Telegram alert IMMEDIATELY so it never blocks or times out
-    const telegramPromise = sendTelegramAlert({
+    // 1. Dispatch Telegram alert immediately
+    const telegramResult = await sendTelegramAlert({
       status: status || 'Warning',
       message: message || 'Threat detected',
       nodeName: nodeName || 'cam-01',
@@ -86,7 +92,6 @@ export async function POST(request: Request) {
 
     let savedAlertId: string | number | undefined = undefined;
 
-    // 2. Save alert record to Supabase
     if (supabaseUrl && supabaseKey) {
       const supabase = createClient(supabaseUrl, supabaseKey);
       
@@ -118,16 +123,18 @@ export async function POST(request: Request) {
       }
     }
 
-    // Await Telegram response before returning HTTP 200
-    await telegramPromise;
-
-    return NextResponse.json({ success: true, message: 'Alert processed and dispatched to Telegram' });
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Alert processed successfully',
+      telegram: telegramResult,
+      savedAlertId 
+    });
 
   } catch (error: any) {
     console.error('General Alert Route Error:', error);
     return NextResponse.json(
       { success: false, error: error?.message || 'Failed to process alert' }, 
-      { status: 200 }
+      { status: 500 }
     );
   }
 }
