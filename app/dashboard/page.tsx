@@ -163,7 +163,7 @@ export default function DashboardPage() {
                       {(alert.video_url || alert.screenshot) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-[#0d1527] rounded-xl border border-slate-800/80">
                           
-                          {/* Playable HD Video Player */}
+                          {/* Playable HD Video Player with Keyframe Poster */}
                           {alert.video_url ? (
                             <div>
                               <p className="text-xs uppercase font-mono tracking-wider text-cyan-400 mb-2 flex items-center gap-1.5">
@@ -172,6 +172,7 @@ export default function DashboardPage() {
                               </p>
                               <video 
                                 src={alert.video_url} 
+                                poster={alert.screenshot ? `data:image/jpeg;base64,${alert.screenshot}` : undefined}
                                 controls 
                                 preload="metadata"
                                 className="rounded-lg border border-slate-800 max-h-64 w-full bg-black shadow-md object-contain"
