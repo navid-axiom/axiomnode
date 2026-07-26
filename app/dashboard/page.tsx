@@ -53,6 +53,14 @@ export default function DashboardPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [orderCameraCount, setOrderCameraCount] = useState<number>(4);
 
+  // VSL Drive Embed Link & Zero-Trust Diagram Asset Path
+  const [vslDriveUrl, setVslDriveUrl] = useState<string>(
+    "https://drive.google.com/file/d/1-_Q8TElPQ9mPWcGmNUei8fq4S0MtNGfC/preview"
+  );
+  const [architectureImgUrl, setArchitectureImgUrl] = useState<string>(
+    "/0-trust-architecture.png"
+  );
+
   const fetchAlerts = async () => {
     try {
       const { data } = await supabase
@@ -89,22 +97,23 @@ export default function DashboardPage() {
   };
 
   const getNodeTier = (cams: number) => {
-    if (cams <= 8) return { name: "Axiom Node Standard", price: 500, chip: "Intel N100 Edge Unit" };
-    if (cams <= 16) return { name: "Axiom Node Pro", price: 1000, chip: "Core i5 + Edge GPU" };
-    return { name: "Axiom Node Enterprise", price: 1500, chip: "Cluster Acceleration Node" };
+    if (cams <= 8) return { name: "Axiom Node Standard", price: 500, chip: "Intel N100 Edge Unit", pilotEligible: true };
+    if (cams <= 16) return { name: "Axiom Node Pro", price: 1000, chip: "Core i5 + Edge GPU", pilotEligible: false };
+    return { name: "Axiom Node Enterprise", price: 1500, chip: "Cluster Acceleration Node", pilotEligible: false };
   };
 
   const currentTier = getNodeTier(orderCameraCount);
   const monthlyTotal = 99 + (orderCameraCount * 35);
+  const pilotCameraCap = Math.min(orderCameraCount, 8);
 
   return (
     <div className="min-h-screen bg-[#0B172E] text-[#F0F4F9] flex flex-col font-['Inter',sans-serif] selection:bg-[#00C2E0] selection:text-[#0B172E]">
       
-      {}
+      {/* Top Header Navigation */}
       <header className="border-b border-[#162036] bg-[#0F1420]/90 backdrop-blur-md sticky top-0 z-50 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-xl">
         <AxiomLogo />
 
-        {/* View Switcher Tabs */}
+        {/* Desktop View Switcher Tabs */}
         <div className="hidden sm:flex items-center p-1 bg-[#0B172E] border border-[#162036] rounded-xl text-xs font-medium">
           <button
             onClick={() => setActiveTab("dashboard")}
@@ -138,7 +147,7 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* System Status & Auth */}
+        {/* System Status & Authentication */}
         <div className="flex items-center gap-3">
           <span className="hidden md:inline-flex items-center gap-2 text-[11px] px-3 py-1.5 bg-[#00C2E0]/10 text-[#00C2E0] border border-[#00C2E0]/30 rounded-full font-['JetBrains_Mono',monospace] tracking-wider uppercase">
             <span className="h-2 w-2 rounded-full bg-[#00C2E0] animate-ping" />
@@ -148,7 +157,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {}
+      {/* Mobile View Switcher Bar */}
       <div className="sm:hidden flex border-b border-[#162036] bg-[#0F1420] p-1.5 text-xs font-medium justify-around">
         <button
           onClick={() => setActiveTab("dashboard")}
@@ -232,7 +241,6 @@ export default function DashboardPage() {
                   const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                   const dateString = date.toLocaleDateString();
                   const alertAnchorId = `alert-${alert.id}`;
-                  const incidentUrl = typeof window !== 'undefined' ? `${window.location.origin}/dashboard#${alertAnchorId}` : '#';
 
                   return (
                     <div 
@@ -264,7 +272,7 @@ export default function DashboardPage() {
                         {alert.message}
                       </p>
 
-                      {/* Telegram Notification Dispatch Preview */}
+                      {/* Telegram Dispatch Confirmation */}
                       <div className="mt-3 p-3 bg-[#0B172E] border border-[#162036] rounded-xl flex flex-col gap-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] uppercase font-mono tracking-wider text-[#00C2E0] flex items-center gap-1.5">
@@ -281,7 +289,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      {/* Incident Media Grid: Video Player + Law Enforcement Card */}
+                      {/* Media Grid: Video Player + Law Enforcement Details */}
                       {(alert.video_url || alert.screenshot || alert.suspect_description) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-[#0B172E] rounded-xl border border-[#162036]">
                           
@@ -313,7 +321,7 @@ export default function DashboardPage() {
                             </div>
                           ) : null}
 
-                          {/* Law Enforcement Log Details */}
+                          {/* Law Enforcement Profile Details */}
                           {alert.suspect_description && (
                             <div className="flex flex-col gap-2 text-xs font-mono">
                               <p className="text-xs uppercase font-mono tracking-wider text-[#A7E8F3] mb-1">
@@ -367,29 +375,32 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {/* VSL Video Player Mockup */}
+          {/* VSL Video Player Integration */}
           <div className="relative aspect-video max-w-4xl mx-auto w-full bg-[#0F1420] border-2 border-[#00C2E0]/40 rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,194,224,0.15)] group">
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-xs p-6 text-center">
-              <div className="h-20 w-20 rounded-full bg-[#00C2E0] text-[#0B172E] flex items-center justify-center font-bold text-3xl shadow-[0_0_20px_rgba(0,194,224,0.6)] group-hover:scale-110 transition cursor-pointer">
-                ▶
-              </div>
-              <p className="text-white font-semibold text-xl mt-4 font-['Montserrat',sans-serif]">
-                Watch the 8-Minute Product Demonstration
-              </p>
-              <p className="text-slate-400 text-xs mt-1 font-mono">
-                See Axiom Node ignore a stray dog and catch an intruder with bolt cutters in 4 seconds flat.
-              </p>
-            </div>
+            {vslDriveUrl.includes("drive.google.com") ? (
+              <iframe
+                src={vslDriveUrl}
+                className="w-full h-full border-0"
+                allow="autoplay; fullscreen"
+                title="Axiom Vision VSL Demo"
+              />
+            ) : (
+              <video
+                src={vslDriveUrl}
+                controls
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
 
-          {/* "No-Brainer" Interactive Order Configurator */}
+          {/* Interactive Order Configurator with 8-Camera Pilot Cap */}
           <div className="p-8 bg-[#0F1420] border border-[#162036] rounded-3xl shadow-2xl space-y-8">
             <div className="text-center space-y-2">
               <h2 className="text-2xl md:text-3xl font-bold font-['Montserrat',sans-serif] text-white">
                 Configure Your 30-Day "Blindspot" Pilot Node
               </h2>
-              <p className="text-slate-400 text-sm">
-                Select your lot's camera count. We ship the hardware pre-configured to your network.
+              <p className="text-slate-400 text-sm max-w-xl mx-auto">
+                Evaluate up to 8 primary camera blindspots on a free 30-day trial with our pre-configured $500 Standard Node.
               </p>
             </div>
 
@@ -397,8 +408,8 @@ export default function DashboardPage() {
               {/* Camera Slider */}
               <div className="space-y-6 bg-[#0B172E] p-6 rounded-2xl border border-[#162036]">
                 <div className="flex justify-between items-center">
-                  <label className="text-sm font-mono uppercase text-slate-300">Number of Camera Feeds:</label>
-                  <span className="text-2xl font-bold font-mono text-[#00C2E0]">{orderCameraCount} Cameras</span>
+                  <label className="text-sm font-mono uppercase text-slate-300">Total Lot Cameras:</label>
+                  <span className="text-2xl font-bold font-mono text-[#00C2E0]">{orderCameraCount} Feeds</span>
                 </div>
 
                 <input 
@@ -410,18 +421,24 @@ export default function DashboardPage() {
                   className="w-full accent-[#00C2E0] bg-[#162036] h-2 rounded-lg cursor-pointer"
                 />
 
+                {orderCameraCount > 8 && (
+                  <div className="p-3 bg-[#00C2E0]/10 border border-[#00C2E0]/30 rounded-xl text-xs font-mono text-[#A7E8F3]">
+                    ⚡ <strong>Pilot Note:</strong> The 30-day trial evaluates your <strong>8 highest-priority blindspot cameras</strong> on 1 Standard Node ($500 value). Additional cameras and nodes expand seamlessly post-trial.
+                  </div>
+                )}
+
                 <div className="space-y-2 text-xs font-mono text-slate-400 pt-2 border-t border-[#162036]">
                   <div className="flex justify-between">
-                    <span>Assigned Hardware Tier:</span>
+                    <span>Assigned Hardware:</span>
                     <span className="text-white font-bold">{currentTier.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Edge Hardware Processor:</span>
-                    <span className="text-[#A7E8F3]">{currentTier.chip}</span>
+                    <span>Pilot Evaluation Capacity:</span>
+                    <span className="text-emerald-400 font-bold">{pilotCameraCap} Feeds Included ($0)</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Included Monthly AI Audits:</span>
-                    <span className="text-emerald-400">1,000 / camera / mo</span>
+                    <span>Included AI Vision Audits:</span>
+                    <span className="text-[#A7E8F3]">1,000 / camera / mo</span>
                   </div>
                 </div>
               </div>
@@ -442,13 +459,13 @@ export default function DashboardPage() {
                     <span>${currentTier.price} one-time</span>
                   </div>
                   <div className="flex justify-between text-slate-300">
-                    <span>Site Gateway + Cameras:</span>
+                    <span>Site Gateway + Feeds:</span>
                     <span className="text-[#00C2E0] font-bold">${monthlyTotal} / month</span>
                   </div>
                 </div>
 
                 <button className="w-full py-4 bg-[#00C2E0] hover:bg-[#A7E8F3] text-[#0B172E] font-bold text-base rounded-xl shadow-[0_0_20px_rgba(0,194,224,0.4)] transition duration-200 uppercase tracking-wider font-['Montserrat',sans-serif]">
-                  Claim Your Pre-Configured Node
+                  Claim Your 8-Camera Pilot Node
                 </button>
               </div>
             </div>
@@ -468,22 +485,27 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {/* Architecture Diagram Card */}
-          <div className="p-6 bg-[#0F1420] border border-[#162036] rounded-2xl font-['JetBrains_Mono',monospace] text-xs text-slate-300 leading-relaxed overflow-x-auto shadow-2xl">
-            <pre className="text-[#A7E8F3]">
-{`+-----------------------------------------------------------------------------------+
-|                        AXIOM ZERO-TRUST NETWORK ISOLATION                         |
-|                                                                                   |
-|  [ Client POS / Office PC ]  X <--- HARD AIR-GAP ---> X  [ Guest / Camera VLAN ]  |
-|                                                                 |                 |
-|                                                        [ Axiom Edge Node ]        |
-|                                                                 |                 |
-|                                                  Outbound Encrypted Tunnel        |
-|                                                  (Tailscale / WireGuard)          |
-|                                                                 v                 |
-|                                                     [ Axiom Secure Cloud ]        |
-+-----------------------------------------------------------------------------------+`}
-            </pre>
+          {/* Zero Trust Architecture Image Container */}
+          <div className="p-4 bg-[#0F1420] border border-[#162036] rounded-2xl shadow-2xl flex flex-col items-center justify-center overflow-hidden">
+            <img 
+              src={architectureImgUrl} 
+              alt="Axiom Zero-Trust Network Architecture Diagram" 
+              className="w-full max-w-3xl h-auto rounded-xl object-contain shadow-lg"
+              onError={(e) => {
+                // Fallback UI if local PNG image isn't available
+                (e.target as HTMLElement).style.display = 'none';
+                const parent = (e.target as HTMLElement).parentElement;
+                if (parent && !parent.querySelector('.img-fallback')) {
+                  const fallbackDiv = document.createElement('div');
+                  fallbackDiv.className = 'img-fallback p-8 text-center text-slate-400 font-mono text-xs space-y-2';
+                  fallbackDiv.innerHTML = `
+                    <p className="text-[#00C2E0] font-bold">🖼️ Zero-Trust Architecture Image Slot</p>
+                    <p>File loaded: <code>public/0-trust-architecture.png</code></p>
+                  `;
+                  parent.appendChild(fallbackDiv);
+                }
+              }}
+            />
           </div>
 
           {/* Security Pillars Grid */}
@@ -521,7 +543,7 @@ export default function DashboardPage() {
         </main>
       )}
 
-      {}
+      {/* Footer */}
       <footer className="border-t border-[#162036] bg-[#0F1420] px-8 py-6 text-center text-xs font-mono text-slate-500">
         <p>© 2026 Axiom Vision LLC. All rights reserved. CoreSight AI & Axiom Node are registered technologies.</p>
       </footer>
