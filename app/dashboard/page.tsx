@@ -47,19 +47,15 @@ function AxiomLogo({ className = "h-8" }: { className?: string }) {
 }
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState<"dashboard" | "vsl" | "security">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "pilot" | "security">("dashboard");
   const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [orderCameraCount, setOrderCameraCount] = useState<number>(4);
 
-  // VSL Drive Embed Link & Zero-Trust Diagram Asset Path
-  const [vslDriveUrl, setVslDriveUrl] = useState<string>(
-    "https://drive.google.com/file/d/1-_Q8TElPQ9mPWcGmNUei8fq4S0MtNGfC/preview"
-  );
-  const [architectureImgUrl, setArchitectureImgUrl] = useState<string>(
-    "/0-trust-architecture.png"
-  );
+  // Custom Media Links
+  const [vslDriveUrl, setVslDriveUrl] = useState<string>("https://drive.google.com/file/d/1-_Q8TElPQ9mPWcGmNUei8fq4S0MtNGfC/preview");
+  const [architectureImgUrl, setArchitectureImgUrl] = useState<string>("/0-trust-architecture.png");
 
   const fetchAlerts = async () => {
     try {
@@ -104,16 +100,16 @@ export default function DashboardPage() {
 
   const currentTier = getNodeTier(orderCameraCount);
   const monthlyTotal = 99 + (orderCameraCount * 35);
-  const pilotCameraCap = Math.min(orderCameraCount, 8);
+  const isPilotEligible = orderCameraCount <= 8;
 
   return (
     <div className="min-h-screen bg-[#0B172E] text-[#F0F4F9] flex flex-col font-['Inter',sans-serif] selection:bg-[#00C2E0] selection:text-[#0B172E]">
       
-      {/* Top Header Navigation */}
+      {/* Header */}
       <header className="border-b border-[#162036] bg-[#0F1420]/90 backdrop-blur-md sticky top-0 z-50 px-4 md:px-8 py-3.5 flex items-center justify-between shadow-xl">
         <AxiomLogo />
 
-        {/* Desktop View Switcher Tabs */}
+        {/* View Switcher Tabs */}
         <div className="hidden sm:flex items-center p-1 bg-[#0B172E] border border-[#162036] rounded-xl text-xs font-medium">
           <button
             onClick={() => setActiveTab("dashboard")}
@@ -126,14 +122,14 @@ export default function DashboardPage() {
             Live AI Console
           </button>
           <button
-            onClick={() => setActiveTab("vsl")}
+            onClick={() => setActiveTab("pilot")}
             className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-              activeTab === "vsl"
+              activeTab === "pilot"
                 ? "bg-[#00C2E0] text-[#0B172E] font-bold shadow-[0_0_12px_rgba(0,194,224,0.4)]"
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            VSL & Pilot Order
+            Pilot Info
           </button>
           <button
             onClick={() => setActiveTab("security")}
@@ -143,11 +139,11 @@ export default function DashboardPage() {
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            Zero-Trust Architecture
+            Trust Architecture
           </button>
         </div>
 
-        {/* System Status & Authentication */}
+        {/* System Status & Auth */}
         <div className="flex items-center gap-3">
           <span className="hidden md:inline-flex items-center gap-2 text-[11px] px-3 py-1.5 bg-[#00C2E0]/10 text-[#00C2E0] border border-[#00C2E0]/30 rounded-full font-['JetBrains_Mono',monospace] tracking-wider uppercase">
             <span className="h-2 w-2 rounded-full bg-[#00C2E0] animate-ping" />
@@ -157,7 +153,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Mobile View Switcher Bar */}
+      {/* Mobile Tab Switcher */}
       <div className="sm:hidden flex border-b border-[#162036] bg-[#0F1420] p-1.5 text-xs font-medium justify-around">
         <button
           onClick={() => setActiveTab("dashboard")}
@@ -166,20 +162,20 @@ export default function DashboardPage() {
           Console
         </button>
         <button
-          onClick={() => setActiveTab("vsl")}
-          className={`px-3 py-1.5 rounded-lg ${activeTab === "vsl" ? "bg-[#00C2E0] text-[#0B172E] font-bold" : "text-slate-400"}`}
+          onClick={() => setActiveTab("pilot")}
+          className={`px-3 py-1.5 rounded-lg ${activeTab === "pilot" ? "bg-[#00C2E0] text-[#0B172E] font-bold" : "text-slate-400"}`}
         >
-          VSL Order
+          Pilot Info
         </button>
         <button
           onClick={() => setActiveTab("security")}
           className={`px-3 py-1.5 rounded-lg ${activeTab === "security" ? "bg-[#00C2E0] text-[#0B172E] font-bold" : "text-slate-400"}`}
         >
-          Zero-Trust
+          Trust Arch
         </button>
       </div>
 
-      {}
+      {/* TAB 1: Live AI Console */}
       {activeTab === "dashboard" && (
         <main className="p-4 md:p-8 max-w-7xl mx-auto w-full flex-1 flex flex-col gap-6 animate-fadeIn">
           
@@ -241,6 +237,7 @@ export default function DashboardPage() {
                   const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                   const dateString = date.toLocaleDateString();
                   const alertAnchorId = `alert-${alert.id}`;
+                  const incidentUrl = typeof window !== 'undefined' ? `${window.location.origin}/dashboard#${alertAnchorId}` : '#';
 
                   return (
                     <div 
@@ -272,7 +269,7 @@ export default function DashboardPage() {
                         {alert.message}
                       </p>
 
-                      {/* Telegram Dispatch Confirmation */}
+                      {/* Telegram Notification Dispatch Preview */}
                       <div className="mt-3 p-3 bg-[#0B172E] border border-[#162036] rounded-xl flex flex-col gap-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] uppercase font-mono tracking-wider text-[#00C2E0] flex items-center gap-1.5">
@@ -289,7 +286,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      {/* Media Grid: Video Player + Law Enforcement Details */}
+                      {/* Incident Media Grid: Video Player + Law Enforcement Card */}
                       {(alert.video_url || alert.screenshot || alert.suspect_description) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-[#0B172E] rounded-xl border border-[#162036]">
                           
@@ -321,7 +318,7 @@ export default function DashboardPage() {
                             </div>
                           ) : null}
 
-                          {/* Law Enforcement Profile Details */}
+                          {/* Law Enforcement Log Details */}
                           {alert.suspect_description && (
                             <div className="flex flex-col gap-2 text-xs font-mono">
                               <p className="text-xs uppercase font-mono tracking-wider text-[#A7E8F3] mb-1">
@@ -381,7 +378,7 @@ export default function DashboardPage() {
               <iframe
                 src={vslDriveUrl}
                 className="w-full h-full border-0"
-                allow="autoplay; fullscreen"
+                allow="autoplay"
                 title="Axiom Vision VSL Demo"
               />
             ) : (
@@ -393,7 +390,7 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Interactive Order Configurator with 8-Camera Pilot Cap */}
+          {/* Capped Interactive Order Configurator */}
           <div className="p-8 bg-[#0F1420] border border-[#162036] rounded-3xl shadow-2xl space-y-8">
             <div className="text-center space-y-2">
               <h2 className="text-2xl md:text-3xl font-bold font-['Montserrat',sans-serif] text-white">
@@ -473,7 +470,6 @@ export default function DashboardPage() {
         </main>
       )}
 
-      {}
       {activeTab === "security" && (
         <main className="p-4 md:p-8 max-w-5xl mx-auto w-full flex-1 flex flex-col gap-8 animate-fadeIn">
           <div className="text-center space-y-2">
@@ -485,14 +481,14 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {/* Zero Trust Architecture Image Container */}
+          {/* Zero Trust Image Diagram Container */}
           <div className="p-4 bg-[#0F1420] border border-[#162036] rounded-2xl shadow-2xl flex flex-col items-center justify-center overflow-hidden">
             <img 
               src={architectureImgUrl} 
               alt="Axiom Zero-Trust Network Architecture Diagram" 
               className="w-full max-w-3xl h-auto rounded-xl object-contain shadow-lg"
               onError={(e) => {
-                // Fallback UI if local PNG image isn't available
+                // Fallback UI if local PNG image hasn't been added to /public folder yet
                 (e.target as HTMLElement).style.display = 'none';
                 const parent = (e.target as HTMLElement).parentElement;
                 if (parent && !parent.querySelector('.img-fallback')) {
@@ -500,12 +496,248 @@ export default function DashboardPage() {
                   fallbackDiv.className = 'img-fallback p-8 text-center text-slate-400 font-mono text-xs space-y-2';
                   fallbackDiv.innerHTML = `
                     <p className="text-[#00C2E0] font-bold">🖼️ Zero-Trust Architecture Image Slot</p>
-                    <p>File loaded: <code>public/0-trust-architecture.png</code></p>
+                    <p>Place your NotebookLM diagram image inside <code>public/zero-trust-architecture.png</code></p>
                   `;
                   parent.appendChild(fallbackDiv);
                 }
               }}
             />
+          </div>
+
+          {/* Security Pillars Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-[#0F1420] border border-[#162036] rounded-2xl space-y-3">
+              <div className="h-10 w-10 rounded-xl bg-[#00C2E0]/10 border border-[#00C2E0]/30 text-[#00C2E0] flex items-center justify-center font-bold">
+                01
+              </div>
+              <h3 className="font-bold text-white text-base font-['Montserrat',sans-serif]">Zero Open Inbound Ports</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                Never opens firewall ports. Uses outbound-only, AES-256 encrypted WireGuard tunnels so your local router stays 100% locked down.
+              </p>
+            </div>
+
+            <div className="p-6 bg-[#0F1420] border border-[#162036] rounded-2xl space-y-3">
+              <div className="h-10 w-10 rounded-xl bg-[#00C2E0]/10 border border-[#00C2E0]/30 text-[#00C2E0] flex items-center justify-center font-bold">
+                02
+              </div>
+              <h3 className="font-bold text-white text-base font-['Montserrat',sans-serif]">Read-Only RTSP Stream</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                Operates as a passive viewer over standard RTSP. Cannot rewrite NVR hard drives, change camera settings, or interfere with 24/7 recording.
+              </p>
+            </div>
+
+            <div className="p-6 bg-[#0F1420] border border-[#162036] rounded-2xl space-y-3">
+              <div className="h-10 w-10 rounded-xl bg-[#00C2E0]/10 border border-[#00C2E0]/30 text-[#00C2E0] flex items-center justify-center font-bold">
+                03
+              </div>
+              <h3 className="font-bold text-white text-base font-['Montserrat',sans-serif]">RAM-Only Video Buffering</h3>
+              <p className="text-slate-400 text-xs leading-relaxed">
+                99.9% of video stays local inside the node's physical memory and overwrites every 10 seconds. Only confirmed human threat keyframes ping the cloud.
+              </p>
+            </div>
+          </div>
+        </main>
+      )}
+
+      {}
+      {/* TAB 2: Pilot Information */}
+      {activeTab === "pilot" && (
+        <main className="p-4 md:p-8 max-w-6xl mx-auto w-full flex-1 flex flex-col gap-10 animate-fadeIn">
+          
+          {/* Pilot Hero Header */}
+          <div className="text-center space-y-4 max-w-3xl mx-auto mt-4">
+            <span className="px-3 py-1 bg-[#00C2E0]/10 text-[#00C2E0] border border-[#00C2E0]/30 rounded-full font-mono text-xs uppercase tracking-widest">
+              Zero-Friction Camera Intelligence Overlay
+            </span>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white font-['Montserrat',sans-serif] leading-tight">
+              Stop Paying For False Alarms. <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00C2E0] to-[#A7E8F3]">
+                Turn Passive Cameras Into Active Guards.
+              </span>
+            </h1>
+            <p className="text-slate-300 text-base md:text-lg leading-relaxed">
+              Your existing cameras show you how you got robbed yesterday. Axiom Node plugs into your existing router in 10 minutes, ignores the wind and animals for $0, and texts your phone the second a human threat jumps the fence.
+            </p>
+          </div>
+
+          {/* Video Player Integration */}
+          <div className="relative aspect-video max-w-4xl mx-auto w-full bg-[#0F1420] border-2 border-[#00C2E0]/40 rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(0,194,224,0.15)] group">
+            {vslDriveUrl.includes("drive.google.com") ? (
+              <iframe
+                src={vslDriveUrl}
+                className="w-full h-full border-0"
+                allow="autoplay"
+                title="Axiom Vision Overview Demo"
+              />
+            ) : (
+              <video
+                src={vslDriveUrl}
+                controls
+                className="w-full h-full object-cover"
+              />
+            )}
+          </div>
+
+          {/* Informational Capacity & Rate Calculator */}
+          <div className="p-8 bg-[#0F1420] border border-[#162036] rounded-3xl shadow-2xl space-y-8">
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl md:text-3xl font-bold font-['Montserrat',sans-serif] text-white">
+                30-Day "Blindspot" Pilot Capacity & Pricing Calculator
+              </h2>
+              <p className="text-slate-400 text-sm max-w-xl mx-auto">
+                Evaluate your primary camera feeds. The 30-day free trial covers up to 8 high-priority blindspot cameras on 1 Standard Node.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              {/* Camera Slider */}
+              <div className="space-y-6 bg-[#0B172E] p-6 rounded-2xl border border-[#162036]">
+                <div className="flex justify-between items-center">
+                  <label className="text-sm font-mono uppercase text-slate-300">Total Lot Cameras:</label>
+                  <span className="text-2xl font-bold font-mono text-[#00C2E0]">{orderCameraCount} Feeds</span>
+                </div>
+
+                <input 
+                  type="range" 
+                  min="1" 
+                  max="30" 
+                  value={orderCameraCount} 
+                  onChange={(e) => setOrderCameraCount(parseInt(e.target.value))}
+                  className="w-full accent-[#00C2E0] bg-[#162036] h-2 rounded-lg cursor-pointer"
+                />
+
+                {/* Conditional Notice based on 8-camera threshold */}
+                {!isPilotEligible ? (
+                  <div className="p-3 bg-amber-950/40 border border-amber-500/40 rounded-xl text-xs font-mono text-amber-200">
+                    ⚠️ <strong>Pilot Capacity Limit:</strong> Free 30-day trials are capped at <strong>8 primary blindspot cameras</strong> ($500 Standard Node value). Sites with {orderCameraCount} feeds expand to post-trial commercial rates.
+                  </div>
+                ) : (
+                  <div className="p-3 bg-[#00C2E0]/10 border border-[#00C2E0]/30 rounded-xl text-xs font-mono text-[#A7E8F3]">
+                    ⚡ <strong>Pilot Note:</strong> You are evaluating <strong>{orderCameraCount} camera feeds</strong>. Your lot qualifies for the 100% free 30-day evaluation trial.
+                  </div>
+                )}
+
+                <div className="space-y-2 text-xs font-mono text-slate-400 pt-2 border-t border-[#162036]">
+                  <div className="flex justify-between">
+                    <span>Assigned Hardware:</span>
+                    <span className="text-white font-bold">{currentTier.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Included AI Audits:</span>
+                    <span className="text-[#A7E8F3]">1,000 / camera / mo</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Rate Output Card (Dynamic Dollar Amount Display) */}
+              <div className="bg-gradient-to-br from-[#162036] to-[#0F1420] p-6 rounded-2xl border border-[#00C2E0]/40 space-y-4">
+                <div className="space-y-1">
+                  <span className="text-xs font-mono uppercase text-[#00C2E0]">
+                    {isPilotEligible ? "30-Day Pilot Evaluation Rate:" : "Standard Commercial Investment Rate:"}
+                  </span>
+                  
+                  {isPilotEligible ? (
+                    <div>
+                      <div className="text-4xl font-extrabold font-['Montserrat',sans-serif] text-white">
+                        $0.00 <span className="text-xs font-normal text-slate-400">for 30 days</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-400 font-mono mt-1">
+                        ✓ 100% Free 30-Day Pilot (Up to 8 cameras)
+                      </p>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="text-3xl font-extrabold font-['Montserrat',sans-serif] text-amber-300">
+                        ${monthlyTotal} <span className="text-xs font-normal text-slate-400">/ month</span>
+                      </div>
+                      <p className="text-[11px] text-amber-200/80 font-mono mt-1">
+                        + ${currentTier.price} one-time hardware fee ({orderCameraCount} feeds exceeds 8-camera free trial cap)
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-3 border-t border-slate-700/60 space-y-1 text-xs font-mono">
+                  <div className="flex justify-between text-slate-300">
+                    <span>Hardware Unit Cost:</span>
+                    <span>${currentTier.price} one-time</span>
+                  </div>
+                  <div className="flex justify-between text-slate-300">
+                    <span>Post-Trial Subscription:</span>
+                    <span className="text-[#00C2E0] font-bold">${monthlyTotal} / month</span>
+                  </div>
+                </div>
+
+                {/* Read-Only Information Banner (No Order Button) */}
+                <div className="p-3 bg-[#0B172E] border border-[#162036] rounded-xl text-center">
+                  <p className="text-xs font-mono text-slate-400">
+                    ℹ️ <strong className="text-white">Pilot Program Information Sheet:</strong> To request a 30-day pilot node for your lot, contact Axiom Vision directly.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      )}
+
+      {}
+      {/* TAB 3: Trust Cybersecurity & Network Isolation */}
+      {activeTab === "security" && (
+        <main className="p-4 md:p-8 max-w-5xl mx-auto w-full flex-1 flex flex-col gap-8 animate-fadeIn">
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold font-['Montserrat',sans-serif] text-white">
+              Trust Cybersecurity & Network Isolation
+            </h1>
+            <p className="text-slate-400 text-sm max-w-2xl mx-auto">
+              Axiom Vision is engineered to eliminate local router risk. Hand or email this technical specification sheet to your IT or network administrator.
+            </p>
+          </div>
+
+          {/* Trust Architecture Image Diagram Container with Clickable & Downloadable Controls */}
+          <div className="p-6 bg-[#0F1420] border border-[#162036] rounded-2xl shadow-2xl flex flex-col items-center justify-center gap-4">
+            <div className="w-full flex items-center justify-between text-xs font-mono text-slate-400 px-2">
+              <span className="flex items-center gap-1.5 text-[#00C2E0]">
+                <span className="h-2 w-2 rounded-full bg-[#00C2E0]" />
+                Official Network Architecture Diagram
+              </span>
+              <a 
+                href={architectureImgUrl} 
+                download="Axiom-Trust-Architecture.png"
+                className="px-3 py-1.5 rounded-lg bg-[#162036] hover:bg-[#00C2E0] hover:text-[#0B172E] text-slate-200 font-bold transition flex items-center gap-2"
+              >
+                📥 Download Diagram for IT Technician
+              </a>
+            </div>
+
+            <a 
+              href={architectureImgUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full max-w-3xl block group relative rounded-xl overflow-hidden border border-[#162036] hover:border-[#00C2E0]/50 transition shadow-lg"
+              title="Click to view full-resolution image"
+            >
+              <img 
+                src={architectureImgUrl} 
+                alt="Axiom Trust Network Architecture Diagram" 
+                className="w-full h-auto object-contain transition duration-200 group-hover:opacity-90"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                  const parent = (e.target as HTMLElement).parentElement;
+                  if (parent && !parent.querySelector('.img-fallback')) {
+                    const fallbackDiv = document.createElement('div');
+                    fallbackDiv.className = 'img-fallback p-8 text-center text-slate-400 font-mono text-xs space-y-2';
+                    fallbackDiv.innerHTML = `
+                      <p className="text-[#00C2E0] font-bold">🖼️ Trust Architecture Image Slot</p>
+                      <p>Place your NotebookLM diagram image inside <code>public/0-trust-architecture.png</code></p>
+                    `;
+                    parent.appendChild(fallbackDiv);
+                  }
+                }}
+              />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs font-mono text-white gap-2 backdrop-blur-[2px]">
+                🔍 Click to Open High-Resolution Spec Diagram
+              </div>
+            </a>
           </div>
 
           {/* Security Pillars Grid */}
