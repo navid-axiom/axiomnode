@@ -98,39 +98,6 @@ export default function DashboardPage() {
     }
   }, [userLoaded, user]);
 
-  const [alerts, setAlerts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [orderCameraCount, setOrderCameraCount] = useState<number>(4);
-
-  // Custom Media Links
-  const [vslDriveUrl] = useState<string>("https://drive.google.com/file/d/1-_Q8TElPQ9mPWcGmNUei8fq4S0MtNGfC/preview");
-  const [architectureImgUrl] = useState<string>("/0-trust-architecture.png");
-
-  const fetchAlerts = async () => {
-    try {
-      const { data } = await supabase
-        .from('alerts')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(50);
-        
-      if (data) {
-        setAlerts(data);
-      }
-    } catch (err) {
-      console.warn("Database sync notice:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAlerts();
-    const interval = setInterval(fetchAlerts, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
   const handleCopyLink = (alertId: string) => {
     const directUrl = `${window.location.origin}/dashboard#alert-${alertId}`;
     if (typeof navigator !== "undefined" && navigator.clipboard) {
@@ -531,7 +498,7 @@ export default function DashboardPage() {
 
                 {/* Read-Only Information Banner (No Order Button) */}
                 <div className="p-3 bg-[#0B172E] border border-[#162036] rounded-xl text-center">
-                  <p className="text-xs font-mono text-slate-400">
+                  <p className="text-xs font-mono text-[#A7E8F3]">
                     ℹ️ <strong className="text-white">Pilot Program Information Sheet:</strong> To request a 30-day pilot node for your lot, contact Axiom Vision directly.
                   </p>
                 </div>
@@ -580,19 +547,6 @@ export default function DashboardPage() {
                 src={architectureImgUrl} 
                 alt="Axiom Trust Network Architecture Diagram" 
                 className="w-full h-auto object-contain transition duration-200 group-hover:opacity-90"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                  const parent = (e.target as HTMLElement).parentElement;
-                  if (parent && !parent.querySelector('.img-fallback')) {
-                    const fallbackDiv = document.createElement('div');
-                    fallbackDiv.className = 'img-fallback p-8 text-center text-slate-400 font-mono text-xs space-y-2';
-                    fallbackDiv.innerHTML = `
-                      <p className="text-[#00C2E0] font-bold">🖼️ Trust Architecture Image Slot</p>
-                      <p>Place your NotebookLM diagram image inside <code>public/0-trust-architecture.png</code></p>
-                    `;
-                    parent.appendChild(fallbackDiv);
-                  }
-                }}
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-xs font-mono text-white gap-2 backdrop-blur-[2px]">
                 🔍 Click to Open High-Resolution Spec Diagram
