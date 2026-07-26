@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 
 // Initialize Supabase Client
@@ -47,7 +47,57 @@ function AxiomLogo({ className = "h-8" }: { className?: string }) {
 }
 
 export default function DashboardPage() {
+  const { user, isLoaded: userLoaded } = useUser();
   const [activeTab, setActiveTab] = useState<"dashboard" | "pilot" | "security">("dashboard");
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [orderCameraCount, setOrderCameraCount] = useState<number>(4);
+
+  // Custom Media Links
+  const [vslDriveUrl] = useState<string>("https://drive.google.com/file/d/1-_Q8TElPQ9mPWcGmNUei8fq4S0MtNGfC/preview");
+  const [architectureImgUrl] = useState<string>("/0-trust-architecture.png");
+
+  const fetchAlerts = async () => {
+    try {
+      // Build base query
+      let query = supabase
+        .from('alerts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      // Data Isolation Filter:
+      // If user metadata has a specific assigned node_name, filter by it.
+      // E.g., if user is assigned "cam-01" or "bobs-rv-01", only fetch their alerts.
+      const assignedNode = user?.publicMetadata?.nodeName as string;
+      if (assignedNode) {
+        query = query.eq('node_name', assignedNode);
+      } else if (user?.emailAddresses?.[0]?.emailAddress !== 'navid@axiomvision.io') {
+        // If not admin and no node assigned yet, filter out test alerts
+        query = query.neq('status', 'TEST_DATA');
+      }
+
+      const { data } = await query;
+        
+      if (data) {
+        setAlerts(data);
+      }
+    } catch (err) {
+      console.warn("Database sync notice:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userLoaded) {
+      fetchAlerts();
+      const interval = setInterval(fetchAlerts, 4000);
+      return () => clearInterval(interval);
+    }
+  }, [userLoaded, user]);
+
   const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
