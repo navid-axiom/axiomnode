@@ -145,7 +145,7 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* Video Player Card (Click to Play Modal) */}
+        {/* Video Player Card (Click to Play Lightbox Modal) */}
         <div 
           onClick={() => setIsVideoModalOpen(true)}
           className="relative aspect-video max-w-4xl mx-auto w-full bg-[#0A1328] border-2 border-[#00C2E0]/50 rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(0,194,224,0.25)] group cursor-pointer"
@@ -281,7 +281,7 @@ export default function LandingPage() {
 
             </div>
 
-            {/* Column 2: Visual Hardware Model Showcase (Transparent Backdrop + Multiply Blend Fix) */}
+            {/* Column 2: Visual Hardware Model Showcase (Unfiltered Clean Rendering) */}
             <div className="lg:col-span-4 bg-[#0D1830] p-6 rounded-2xl border border-[#1B325C] flex flex-col items-center justify-between text-center relative overflow-hidden group">
               <div className="w-full flex items-center justify-between text-[11px] font-mono text-slate-400 mb-2">
                 <span className="text-[#00C2E0] font-bold uppercase tracking-wider">
@@ -292,7 +292,7 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              {/* Seamless Display Container with multiply blend fix */}
+              {/* Seamless Display Container */}
               <div className="my-auto py-4 w-full flex flex-col items-center justify-center">
                 {!imgError[currentTier.id] ? (
                   <div className="w-full flex items-center justify-center min-h-[190px]">
@@ -300,7 +300,7 @@ export default function LandingPage() {
                       src={currentTier.img}
                       alt={currentTier.name}
                       onError={() => handleImageError(currentTier.id)}
-                      className="max-h-48 w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)] transition-transform duration-300 group-hover:scale-105 mix-blend-multiply"
+                      className="max-h-48 w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)] transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                 ) : (
@@ -420,25 +420,15 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Pure Uncropped Video Container */}
+            {/* Video Container */}
             <div className="bg-black w-full flex-1 flex items-center justify-center min-h-[300px] overflow-hidden">
-              {vslDriveUrl.includes("drive.google.com") ? (
-                <iframe
-                  src={vslDriveUrl.includes("preview") ? `${vslDriveUrl}?autoplay=1` : vslDriveUrl}
-                  className="w-full aspect-video border-0 max-h-[75vh]"
-                  allow="autoplay; fullscreen"
-                  allowFullScreen
-                  title="Axiom Vision Overview Demo"
-                />
-              ) : (
-                <video
-                  src={vslDriveUrl}
-                  controls
-                  autoPlay
-                  playsInline
-                  className="w-full max-h-[75vh] object-contain rounded-lg"
-                />
-              )}
+              <iframe
+                src={vslDriveUrl.includes("?") ? `${vslDriveUrl}&autoplay=1` : `${vslDriveUrl}?autoplay=1`}
+                className="w-full aspect-video border-0 max-h-[75vh]"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+                title="Axiom Vision Overview Demo"
+              />
             </div>
           </div>
         </div>
