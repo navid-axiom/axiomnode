@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
 function AxiomLogo({ className = "h-14 md:h-16" }: { className?: string }) {
   const [usePng, setUsePng] = useState(false);
 
