@@ -1,33 +1,41 @@
-"use client";
-
-import { useState } from "react";
-import Link from "next/link";
-
-function AxiomLogo({ className = "h-10" }: { className?: string }) {
-  const [imgError, setImgError] = useState(false);
+function AxiomLogo({ className = "h-14 md:h-16" }: { className?: string }) {
+  const [usePng, setUsePng] = useState(false);
 
   return (
     <Link href="/" className={`flex items-center gap-3 select-none ${className}`}>
-      {!imgError ? (
+      {usePng ? (
         <img
           src="/axiom-logo.png"
           alt="Axiom Vision Logo"
-          className="h-10 w-auto object-contain drop-shadow-[0_0_12px_rgba(0,194,224,0.35)]"
-          onError={() => setImgError(true)}
+          className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,194,224,0.3)]"
+          onError={() => setUsePng(false)}
         />
       ) : (
-        /* Vector Fallback if /public/axiom-logo.png is pending upload */
-        <div className="flex items-center gap-3">
-          <svg viewBox="0 0 100 100" className="h-8 w-auto aspect-square overflow-visible drop-shadow-[0_0_8px_rgba(0,194,224,0.4)]">
-            <polygon points="50,10 12,90 32,90 50,48 68,90 88,90" fill="#F0F4F9" />
-            <polygon points="32,70 68,70 65,78 35,78" fill="#0B172E" />
-            <circle cx="50" cy="42" r="7.5" fill="#00C2E0" className="animate-pulse" />
+        /* Native True-Transparent Vector SVG matching official brand geometry */
+        <div className="flex items-center gap-3.5 group cursor-pointer">
+          <svg
+            viewBox="0 0 120 120"
+            className="h-12 md:h-14 w-auto aspect-square overflow-visible drop-shadow-[0_0_16px_rgba(0,194,224,0.35)]"
+          >
+            {/* White Geometric 'A' Frame */}
+            <path
+              d="M 60,10 L 15,102 L 38,102 L 60,54 L 82,102 L 105,102 Z"
+              fill="#FFFFFF"
+            />
+            {/* Center Precision Pinpoint Circle */}
+            <circle
+              cx="60"
+              cy="74"
+              r="9.5"
+              fill="#00C2E0"
+              className="animate-pulse"
+            />
           </svg>
-          <div className="flex flex-col leading-none">
-            <span className="font-['Montserrat',sans-serif] font-extrabold tracking-[0.12em] text-white text-xl">
+          <div className="flex flex-col leading-none justify-center">
+            <span className="font-['Montserrat',sans-serif] font-extrabold tracking-[0.14em] text-white text-2xl md:text-3xl">
               AXIOM
             </span>
-            <span className="font-['Poppins',sans-serif] font-light tracking-[0.35em] text-[#00C2E0] text-[10px] uppercase mt-0.5">
+            <span className="font-['Poppins',sans-serif] font-medium tracking-[0.45em] text-white text-[10px] md:text-[12px] uppercase mt-1 opacity-90">
               VISION
             </span>
           </div>
