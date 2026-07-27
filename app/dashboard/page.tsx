@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
@@ -113,6 +113,21 @@ export default function DashboardPage() {
     }
     setCopiedId(alertId);
     setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  // Instant Full Screen Video Handler
+  const handleVideoPlay = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    const videoEl = e.currentTarget as any;
+    if (videoEl) {
+      if (videoEl.requestFullscreen) {
+        videoEl.requestFullscreen().catch(() => {});
+      } else if (videoEl.webkitEnterFullscreen) {
+        // iOS Safari Fullscreen method
+        videoEl.webkitEnterFullscreen();
+      } else if (videoEl.msRequestFullscreen) {
+        videoEl.msRequestFullscreen();
+      }
+    }
   };
 
   return (
@@ -282,23 +297,29 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      {/* Incident Media Grid: Video Player + Law Enforcement Card */}
+                      {/* Incident Media Grid: Full-Screen Trigger Video Player + Law Enforcement Card */}
                       {(alert.video_url || alert.screenshot || alert.suspect_description) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-[#0B172E] rounded-xl border border-[#162036]">
                           
-                          {/* HD Video Player */}
+                          {/* HD Video Player (Auto-Launches Fullscreen on Play) */}
                           {alert.video_url ? (
                             <div className="flex flex-col gap-2">
-                              <p className="text-xs uppercase font-mono tracking-wider text-[#00C2E0] flex items-center gap-1.5">
-                                <span className="h-2 w-2 rounded-full bg-[#00C2E0] animate-ping" />
-                                10-Second HD Transcoded Clip
+                              <p className="text-xs uppercase font-mono tracking-wider text-[#00C2E0] flex items-center justify-between">
+                                <span className="flex items-center gap-1.5">
+                                  <span className="h-2 w-2 rounded-full bg-[#00C2E0] animate-ping" />
+                                  10-Second HD Transcoded Clip
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-normal">
+                                  ⛶ Auto Fullscreen on Play
+                                </span>
                               </p>
                               <video 
                                 src={alert.video_url} 
                                 poster={alert.screenshot ? `data:image/jpeg;base64,${alert.screenshot}` : undefined}
                                 controls 
                                 preload="metadata"
-                                className="rounded-lg border border-[#162036] max-h-60 w-full bg-black shadow-lg object-contain"
+                                onPlay={handleVideoPlay}
+                                className="rounded-lg border border-[#162036] max-h-60 w-full bg-black shadow-lg object-contain cursor-pointer hover:border-[#00C2E0]/50 transition"
                               />
                             </div>
                           ) : alert.screenshot ? (
