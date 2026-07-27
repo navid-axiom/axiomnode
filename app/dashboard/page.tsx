@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
 
@@ -13,7 +14,7 @@ function AxiomLogo({ className = "h-12 md:h-14" }: { className?: string }) {
   const [usePng, setUsePng] = useState(false);
 
   return (
-    <div className={`flex items-center gap-3 select-none ${className}`}>
+    <Link href="/" className={`flex items-center gap-3 select-none ${className}`}>
       {usePng ? (
         <img
           src="/axiom-logo.png"
@@ -52,7 +53,7 @@ function AxiomLogo({ className = "h-12 md:h-14" }: { className?: string }) {
           </div>
         </div>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -420,7 +421,7 @@ export default function DashboardPage() {
                 03
               </div>
               <h3 className="font-bold text-white text-base font-['Montserrat',sans-serif]">RAM-Only Video Buffering</h3>
-              <p className="text-slate-400 text-[#F0F4F9]/70 text-xs leading-relaxed">
+              <p className="text-slate-400 text-xs leading-relaxed">
                 99.9% of video stays local inside the node's physical memory and overwrites every 10 seconds. Only confirmed human threat keyframes ping the cloud.
               </p>
             </div>
@@ -428,9 +429,24 @@ export default function DashboardPage() {
         </main>
       )}
 
-      {/* Footer */}
-      <footer className="border-t border-[#162036] bg-[#0F1420] px-8 py-6 text-center text-xs font-mono text-slate-500">
-        <p>© 2026 Axiom Vision LLC. All rights reserved. CoreSight AI & Axiom Node are registered technologies.</p>
+      {/* Compliance Footer */}
+      <footer className="border-t border-[#162036] bg-[#0F1420] px-6 py-8 text-center text-xs font-mono text-slate-400 mt-12 space-y-3">
+        <div className="flex flex-wrap items-center justify-center gap-6 text-slate-300 font-semibold">
+          <Link href="/terms" className="hover:text-[#00C2E0] transition underline decoration-[#00C2E0]">
+            Terms of Use
+          </Link>
+          <span>•</span>
+          <Link href="/privacy" className="hover:text-[#00C2E0] transition underline decoration-[#00C2E0]">
+            Privacy Policy
+          </Link>
+          <span>•</span>
+          <a href="mailto:navid@axiomvision.io" className="hover:text-[#00C2E0] transition">
+            navid@axiomvision.io
+          </a>
+        </div>
+        <p className="text-[11px] text-slate-500">
+          © 2026 Axiom Vision LLC. All rights reserved. CoreSight AI & Axiom Node are registered technologies.
+        </p>
       </footer>
     </div>
   );
