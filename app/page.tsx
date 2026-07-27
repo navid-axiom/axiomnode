@@ -286,7 +286,7 @@ export default function LandingPage() {
 
             </div>
 
-            {/* Column 2: Visual Hardware Model Showcase (Studio Render Stage Frame) */}
+            {/* Column 2: Visual Hardware Model Showcase (Transparent Backdrop - Plain & Clean) */}
             <div className="lg:col-span-4 bg-[#0D1830] p-6 rounded-2xl border border-[#1B325C] flex flex-col items-center justify-between text-center relative overflow-hidden group">
               <div className="w-full flex items-center justify-between text-[11px] font-mono text-slate-400 mb-2">
                 <span className="text-[#00C2E0] font-bold uppercase tracking-wider">
@@ -297,15 +297,15 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              {/* Hardware Render Studio Container (White/Slate Frame prevents grey background clashes) */}
-              <div className="my-auto py-3 w-full flex flex-col items-center justify-center">
+              {/* Seamless Transparent Display Container */}
+              <div className="my-auto py-4 w-full flex flex-col items-center justify-center">
                 {!imgError[currentTier.id] ? (
-                  <div className="w-full p-4 bg-[#f8fafc] rounded-2xl border border-slate-300 shadow-xl flex items-center justify-center min-h-[190px]">
+                  <div className="w-full flex items-center justify-center min-h-[190px]">
                     <img
                       src={currentTier.img}
                       alt={currentTier.name}
                       onError={() => handleImageError(currentTier.id)}
-                      className="max-h-40 w-auto object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+                      className="max-h-48 w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)] transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
                 ) : (
@@ -335,7 +335,7 @@ export default function LandingPage() {
 
               {/* Illustration Disclaimer */}
               <p className="text-[10px] font-mono text-slate-400 italic pt-2 border-t border-[#1B325C]/60 w-full">
-                * Note: Hardware renders shown above for scale & size comparison.
+                * Note: Hardware renders shown above for size & scale comparison.
               </p>
             </div>
 
