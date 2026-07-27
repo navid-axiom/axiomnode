@@ -53,7 +53,7 @@ function AxiomLogo({ className = "h-12 md:h-14" }: { className?: string }) {
 export default function LandingPage() {
   const [orderCameraCount, setOrderCameraCount] = useState<number>(4);
   const [vslDriveUrl] = useState<string>(
-    "https://drive.google.com/file/d/1tMn3APA6GkphOBsGpVnVyxSYSKfbqVqr/preview"
+    "https://drive.google.com/file/d/1-_Q8TElPQ9mPWcGmNUei8fq4S0MtNGfC/preview"
   );
   const [imgError, setImgError] = useState<Record<string, boolean>>({});
 
@@ -67,8 +67,7 @@ export default function LandingPage() {
         formFactor: "Ultra-Compact Desktop Chassis",
         dimensions: "4.5\" × 4.5\" × 1.5\"",
         maxFeeds: "8 RTSP Feeds",
-        img: "/Axiom Node Standard.png",
-        fallbackAlt: "Standard Edge Node (1-8 Cams)"
+        img: "/Axiom Node Standard.png"
       };
     }
     if (cams <= 16) {
@@ -80,8 +79,7 @@ export default function LandingPage() {
         formFactor: "High-Airflow Performance Node",
         dimensions: "8.0\" × 8.0\" × 3.2\"",
         maxFeeds: "16 RTSP Feeds",
-        img: "/Axiom Node Pro.png",
-        fallbackAlt: "Pro Edge Node (9-16 Cams)"
+        img: "/Axiom Node Pro.png"
       };
     }
     return {
@@ -92,8 +90,7 @@ export default function LandingPage() {
       formFactor: "2U Server-Rack / Heavy Industrial Unit",
       dimensions: "19.0\" × 18.0\" × 3.5\" (2U Rack)",
       maxFeeds: "30 RTSP Feeds",
-      img: "/Axiom Node Enterprise.png",
-      fallbackAlt: "Enterprise Node (17-30 Cams)"
+      img: "/Axiom Node Enterprise.png"
     };
   };
 
@@ -289,7 +286,7 @@ export default function LandingPage() {
 
             </div>
 
-            {/* Column 2: Visual Hardware Model Showcase */}
+            {/* Column 2: Visual Hardware Model Showcase (Studio Render Stage Frame) */}
             <div className="lg:col-span-4 bg-[#0D1830] p-6 rounded-2xl border border-[#1B325C] flex flex-col items-center justify-between text-center relative overflow-hidden group">
               <div className="w-full flex items-center justify-between text-[11px] font-mono text-slate-400 mb-2">
                 <span className="text-[#00C2E0] font-bold uppercase tracking-wider">
@@ -300,15 +297,17 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              {/* Hardware Render Container */}
-              <div className="my-auto py-4 w-full flex flex-col items-center justify-center">
+              {/* Hardware Render Studio Container (White/Slate Frame prevents grey background clashes) */}
+              <div className="my-auto py-3 w-full flex flex-col items-center justify-center">
                 {!imgError[currentTier.id] ? (
-                  <img
-                    src={currentTier.img}
-                    alt={currentTier.name}
-                    onError={() => handleImageError(currentTier.id)}
-                    className="max-h-48 w-auto object-contain drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)] transition-transform duration-300 group-hover:scale-105"
-                  />
+                  <div className="w-full p-4 bg-[#f8fafc] rounded-2xl border border-slate-300 shadow-xl flex items-center justify-center min-h-[190px]">
+                    <img
+                      src={currentTier.img}
+                      alt={currentTier.name}
+                      onError={() => handleImageError(currentTier.id)}
+                      className="max-h-40 w-auto object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
                 ) : (
                   <div className="h-44 w-full bg-[#070D1D] rounded-xl border border-[#1B325C] flex flex-col items-center justify-center p-4 space-y-2">
                     <div className="text-4xl">🖥️</div>
@@ -336,7 +335,7 @@ export default function LandingPage() {
 
               {/* Illustration Disclaimer */}
               <p className="text-[10px] font-mono text-slate-400 italic pt-2 border-t border-[#1B325C]/60 w-full">
-                * Note: Hardware renders above shown for scale & size comparison.
+                * Note: Hardware renders shown above for scale & size comparison.
               </p>
             </div>
 
