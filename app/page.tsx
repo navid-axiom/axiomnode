@@ -56,6 +56,7 @@ export default function LandingPage() {
     "https://drive.google.com/file/d/1tMn3APA6GkphOBsGpVnVyxSYSKfbqVqr/preview"
   );
   const [imgError, setImgError] = useState<Record<string, boolean>>({});
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
 
   const getNodeTier = (cams: number) => {
     if (cams <= 8) {
@@ -65,7 +66,7 @@ export default function LandingPage() {
         price: 500,
         chip: "Intel N100 Quad-Core Edge AI",
         formFactor: "Ultra-Compact Desktop Chassis",
-        dimensions: "4.5\" × 4.5\" × 1.5\"",
+        dimensions: '4.5" × 4.5" × 1.5"',
         maxFeeds: "8 RTSP Feeds",
         img: "/Axiom Node Standard.png"
       };
@@ -77,7 +78,7 @@ export default function LandingPage() {
         price: 1000,
         chip: "Core i5 + Dedicated Neural GPU",
         formFactor: "High-Airflow Performance Node",
-        dimensions: "8.0\" × 8.0\" × 3.2\"",
+        dimensions: '8.0" × 8.0" × 3.2"',
         maxFeeds: "16 RTSP Feeds",
         img: "/Axiom Node Pro.png"
       };
@@ -88,7 +89,7 @@ export default function LandingPage() {
       price: 1500,
       chip: "Dual-GPU Acceleration Cluster",
       formFactor: "2U Server-Rack / Heavy Industrial Unit",
-      dimensions: "19.0\" × 18.0\" × 3.5\" (2U Rack)",
+      dimensions: '19.0" × 18.0" × 3.5" (2U Rack)',
       maxFeeds: "30 RTSP Feeds",
       img: "/Axiom Node Enterprise.png"
     };
@@ -144,22 +145,16 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* Video Player Integration */}
-        <div className="relative aspect-video max-w-4xl mx-auto w-full bg-[#0A1328] border-2 border-[#00C2E0]/50 rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(0,194,224,0.2)] group">
-          {vslDriveUrl.includes("drive.google.com") ? (
-            <iframe
-              src={vslDriveUrl}
-              className="w-full h-full border-0"
-              allow="autoplay"
-              title="Axiom Vision Overview Demo"
-            />
-          ) : (
-            <video
-              src={vslDriveUrl}
-              controls
-              className="w-full h-full object-cover"
-            />
-          )}
+        {/* Video Player Card (Click to Play Modal) */}
+        <div 
+          onClick={() => setIsVideoModalOpen(true)}
+          className="relative aspect-video max-w-4xl mx-auto w-full bg-[#0A1328] border-2 border-[#00C2E0]/50 rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(0,194,224,0.25)] group cursor-pointer"
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070D1D] via-[#0A1328]/70 to-black/40 flex flex-col items-center justify-center gap-4 transition-all duration-300 group-hover:bg-black/30">
+            <div className="h-20 w-20 rounded-full bg-[#00C2E0] text-[#070D1D] flex items-center justify-center font-bold text-3xl shadow-[0_0_35px_rgba(0,194,224,0.8)] group-hover:scale-110 transition-transform duration-300">
+              ▶
+            </div>
+          </div>
         </div>
 
         {/* Direct Contact Banner */}
@@ -286,7 +281,7 @@ export default function LandingPage() {
 
             </div>
 
-            {/* Column 2: Visual Hardware Model Showcase (Transparent Backdrop - Plain & Clean) */}
+            {/* Column 2: Visual Hardware Model Showcase (Transparent Backdrop + Multiply Blend Fix) */}
             <div className="lg:col-span-4 bg-[#0D1830] p-6 rounded-2xl border border-[#1B325C] flex flex-col items-center justify-between text-center relative overflow-hidden group">
               <div className="w-full flex items-center justify-between text-[11px] font-mono text-slate-400 mb-2">
                 <span className="text-[#00C2E0] font-bold uppercase tracking-wider">
@@ -297,7 +292,7 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              {/* Seamless Transparent Display Container */}
+              {/* Seamless Display Container with multiply blend fix */}
               <div className="my-auto py-4 w-full flex flex-col items-center justify-center">
                 {!imgError[currentTier.id] ? (
                   <div className="w-full flex items-center justify-center min-h-[190px]">
@@ -305,7 +300,7 @@ export default function LandingPage() {
                       src={currentTier.img}
                       alt={currentTier.name}
                       onError={() => handleImageError(currentTier.id)}
-                      className="max-h-48 w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)] transition-transform duration-300 group-hover:scale-105"
+                      className="max-h-48 w-auto object-contain drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)] transition-transform duration-300 group-hover:scale-105 mix-blend-multiply"
                     />
                   </div>
                 ) : (
@@ -401,6 +396,53 @@ export default function LandingPage() {
         </section>
 
       </main>
+
+      {/* POP-OUT VIDEO LIGHTBOX MODAL */}
+      {isVideoModalOpen && (
+        <div 
+          onClick={() => setIsVideoModalOpen(false)}
+          className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fadeIn"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-5xl bg-[#0A1328] border-2 border-[#00C2E0] rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(0,194,224,0.4)] flex flex-col max-h-[92vh]"
+          >
+            {/* Modal Header */}
+            <div className="p-4 sm:px-6 bg-[#101F3C] border-b border-[#00C2E0]/40 flex items-center justify-between">
+              <span className="font-bold text-white text-sm md:text-base font-['Montserrat',sans-serif]">
+                Axiom Vision Overview Demo
+              </span>
+              <button
+                onClick={() => setIsVideoModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-[#070D1D] hover:bg-red-950 text-white font-mono text-xs border border-slate-700 transition"
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            {/* Pure Uncropped Video Container */}
+            <div className="bg-black w-full flex-1 flex items-center justify-center min-h-[300px] overflow-hidden">
+              {vslDriveUrl.includes("drive.google.com") ? (
+                <iframe
+                  src={vslDriveUrl.includes("preview") ? `${vslDriveUrl}?autoplay=1` : vslDriveUrl}
+                  className="w-full aspect-video border-0 max-h-[75vh]"
+                  allow="autoplay; fullscreen"
+                  allowFullScreen
+                  title="Axiom Vision Overview Demo"
+                />
+              ) : (
+                <video
+                  src={vslDriveUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="w-full max-h-[75vh] object-contain rounded-lg"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Compliance Footer */}
       <footer className="border-t border-[#162544] bg-[#0A1328] px-6 py-8 text-center text-xs font-mono text-slate-400 mt-12 space-y-3">
