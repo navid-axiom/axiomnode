@@ -64,6 +64,14 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  // Pop-out Video Lightbox Modal State
+  const [selectedVideoModal, setSelectedVideoModal] = useState<{
+    url: string;
+    nodeName?: string;
+    timestamp?: string;
+    message?: string;
+  } | null>(null);
+
   // Custom Media Links
   const [architectureImgUrl] = useState<string>("/0-trust-architecture.png");
 
@@ -301,7 +309,7 @@ export default function DashboardPage() {
                       {(alert.video_url || alert.screenshot || alert.suspect_description) && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-[#0B172E] rounded-xl border border-[#162036]">
                           
-                          {/* HD Video Player (Auto-Launches Fullscreen on Play) */}
+                          {/* HD Video Pop-Out Trigger Card */}
                           {alert.video_url ? (
                             <div className="flex flex-col gap-2">
                               <p className="text-xs uppercase font-mono tracking-wider text-[#00C2E0] flex items-center justify-between">
@@ -309,18 +317,36 @@ export default function DashboardPage() {
                                   <span className="h-2 w-2 rounded-full bg-[#00C2E0] animate-ping" />
                                   10-Second HD Transcoded Clip
                                 </span>
-                                <span className="text-[10px] text-slate-400 font-normal">
-                                  ⛶ Auto Fullscreen on Play
+                                <span className="text-[10px] text-[#A7E8F3] font-bold font-mono">
+                                  🔍 Click to Pop Out
                                 </span>
                               </p>
-                              <video 
-                                src={alert.video_url} 
-                                poster={alert.screenshot ? `data:image/jpeg;base64,${alert.screenshot}` : undefined}
-                                controls 
-                                preload="metadata"
-                                onPlay={handleVideoPlay}
-                                className="rounded-lg border border-[#162036] max-h-60 w-full bg-black shadow-lg object-contain cursor-pointer hover:border-[#00C2E0]/50 transition"
-                              />
+                              <div
+                                onClick={() =>
+                                  setSelectedVideoModal({
+                                    url: alert.video_url,
+                                    nodeName: alert.node_name,
+                                    timestamp: `${dateString} ${timeString}`,
+                                    message: alert.message
+                                  })
+                                }
+                                className="relative group cursor-pointer rounded-lg overflow-hidden border border-[#162036] hover:border-[#00C2E0] transition bg-black aspect-video flex items-center justify-center shadow-lg"
+                              >
+                                <video
+                                  src={alert.video_url}
+                                  poster={alert.screenshot ? `data:image/jpeg;base64,${alert.screenshot}` : undefined}
+                                  preload="metadata"
+                                  className="w-full h-full object-contain pointer-events-none opacity-80 group-hover:opacity-100 transition"
+                                />
+                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition flex flex-col items-center justify-center gap-2">
+                                  <div className="h-12 w-12 rounded-full bg-[#00C2E0] text-[#070D1D] flex items-center justify-center font-bold text-xl shadow-[0_0_20px_rgba(0,194,224,0.6)] group-hover:scale-110 transition">
+                                    ▶
+                                  </div>
+                                  <span className="text-xs font-mono font-bold text-white bg-[#070D1D]/90 px-3 py-1 rounded-full border border-[#00C2E0]/40">
+                                    ▶ Pop Out Video Player
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           ) : alert.screenshot ? (
                             <div className="flex flex-col gap-2">
@@ -367,6 +393,57 @@ export default function DashboardPage() {
             </div>
           </div>
         </main>
+      )}
+
+      {/* POP-OUT VIDEO LIGHTBOX MODAL */}
+      {selectedVideoModal && (
+        <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 md:p-8 animate-fadeIn">
+          <div className="relative w-full max-w-4xl bg-[#0F1420] border-2 border-[#00C2E0]/60 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,194,224,0.3)] flex flex-col">
+            
+            {/* Modal Header */}
+            <div className="p-4 md:px-6 bg-[#162036] border-b border-[#00C2E0]/30 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="h-3 w-3 rounded-full bg-[#00C2E0] animate-ping" />
+                <div>
+                  <h3 className="text-sm md:text-base font-bold text-white font-['Montserrat',sans-serif]">
+                    Incident Video Pop-Out — {selectedVideoModal.nodeName || 'Camera Feed'}
+                  </h3>
+                  {selectedVideoModal.timestamp && (
+                    <p className="text-[11px] font-mono text-slate-300">
+                      Captured: {selectedVideoModal.timestamp}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedVideoModal(null)}
+                className="px-3 py-1.5 rounded-xl bg-[#0B172E] hover:bg-red-900/80 text-white font-mono text-xs border border-slate-700 transition"
+              >
+                ✕ Close (ESC)
+              </button>
+            </div>
+
+            {/* Video Container - Preserves Uncropped HD Dimensions */}
+            <div className="bg-black w-full flex items-center justify-center p-2 relative">
+              <video
+                src={selectedVideoModal.url}
+                controls
+                autoPlay
+                playsInline
+                className="w-full max-h-[70vh] object-contain rounded-lg"
+              />
+            </div>
+
+            {/* Modal Footer Description */}
+            {selectedVideoModal.message && (
+              <div className="p-4 bg-[#0B172E] border-t border-[#162036] text-xs font-mono text-slate-200">
+                <strong className="text-[#00C2E0]">AI Summary:</strong> {selectedVideoModal.message}
+              </div>
+            )}
+          </div>
+        </div>
       )}
 
       {/* TAB 2: Trust Cybersecurity & Network Isolation */}
