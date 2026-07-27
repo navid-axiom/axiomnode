@@ -53,7 +53,7 @@ function AxiomLogo({ className = "h-12 md:h-14" }: { className?: string }) {
 export default function LandingPage() {
   const [orderCameraCount, setOrderCameraCount] = useState<number>(4);
   const [vslDriveUrl] = useState<string>(
-    "https://drive.google.com/file/d/1tMn3APA6GkphOBsGpVnVyxSYSKfbqVqr/view?usp=sharing"
+    "https://drive.google.com/file/d/1tMn3APA6GkphOBsGpVnVyxSYSKfbqVqr/preview"
   );
   const [imgError, setImgError] = useState<Record<string, boolean>>({});
 
