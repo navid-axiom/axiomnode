@@ -190,7 +190,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* REDESIGNED HIGH-CONTRAST CAPACITY & HARDWARE CALCULATOR */}
+        {/* CAPACITY & HARDWARE CALCULATOR */}
         <section className="p-6 md:p-10 bg-[#091222] border-2 border-[#162B4D] rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] space-y-8 relative overflow-hidden">
           
           {/* Header */}
@@ -229,7 +229,7 @@ export default function LandingPage() {
           {/* 3-Column Calculator & Hardware Spec Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch pt-2">
             
-            {/* Column 1: Controls & Slider (5 cols) */}
+            {/* Column 1: Controls & Slider */}
             <div className="lg:col-span-5 bg-[#0D1830] p-6 rounded-2xl border border-[#1B325C] flex flex-col justify-between space-y-6">
               
               <div className="space-y-4">
@@ -289,7 +289,7 @@ export default function LandingPage() {
 
             </div>
 
-            {/* Column 2: Visual Hardware Model Showcase (4 cols) */}
+            {/* Column 2: Visual Hardware Model Showcase */}
             <div className="lg:col-span-4 bg-[#0D1830] p-6 rounded-2xl border border-[#1B325C] flex flex-col items-center justify-between text-center relative overflow-hidden group">
               <div className="w-full flex items-center justify-between text-[11px] font-mono text-slate-400 mb-2">
                 <span className="text-[#00C2E0] font-bold uppercase tracking-wider">
@@ -310,7 +310,6 @@ export default function LandingPage() {
                     className="max-h-48 w-auto object-contain drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)] transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  /* High-End Vector Hardware Mockup Fallback if local PNG isn't in /public yet */
                   <div className="h-44 w-full bg-[#070D1D] rounded-xl border border-[#1B325C] flex flex-col items-center justify-center p-4 space-y-2">
                     <div className="text-4xl">🖥️</div>
                     <span className="text-xs font-mono font-bold text-white">
@@ -341,7 +340,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            {/* Column 3: Rate Output & Call to Action (3 cols) */}
+            {/* Column 3: Rate Output & Call to Action */}
             <div className="lg:col-span-3 bg-gradient-to-b from-[#122347] to-[#0D1830] p-6 rounded-2xl border-2 border-[#00C2E0]/60 flex flex-col justify-between space-y-6 shadow-xl">
               
               <div className="space-y-3">
@@ -404,9 +403,31 @@ export default function LandingPage() {
 
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#162544] bg-[#0A1328] px-8 py-6 text-center text-xs font-mono text-slate-400 mt-12">
-        <p>© 2026 Axiom Vision LLC. All rights reserved. Direct Inquiries: navid@axiomvision.io | (213) 248-9788</p>
+      {/* Compliance Footer */}
+      <footer className="border-t border-[#162544] bg-[#0A1328] px-6 py-8 text-center text-xs font-mono text-slate-400 mt-12 space-y-3">
+        <div className="flex flex-wrap items-center justify-center gap-6 text-slate-300 font-semibold">
+          <Link href="/terms" className="hover:text-[#00C2E0] transition underline decoration-[#00C2E0]">
+            Terms of Use
+          </Link>
+          <span>•</span>
+          <Link href="/privacy" className="hover:text-[#00C2E0] transition underline decoration-[#00C2E0]">
+            Privacy Policy
+          </Link>
+          <span>•</span>
+          <a href="mailto:navid@axiomvision.io" className="hover:text-[#00C2E0] transition">
+            navid@axiomvision.io
+          </a>
+          <span>•</span>
+          <a href="tel:2132489788" className="hover:text-[#00C2E0] transition">
+            (213) 248-9788
+          </a>
+        </div>
+        <p className="text-[11px] text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          📱 <strong>A2P 10DLC Telecommunications Disclosure:</strong> By enrolling in threat notifications, users consent to receive automated emergency SMS alert pings from Axiom Vision LLC. Message and data rates may apply. Message frequency varies based on threat triggers. Reply STOP to opt-out.
+        </p>
+        <p className="text-[11px] text-slate-400 pt-1">
+          © 2026 Axiom Vision LLC. All rights reserved.
+        </p>
       </footer>
     </div>
   );
