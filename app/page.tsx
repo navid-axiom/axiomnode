@@ -22,15 +22,15 @@ function AxiomLogo({ className = "h-14 md:h-16" }: { className?: string }) {
             viewBox="0 0 120 120"
             className="h-12 md:h-14 w-auto aspect-square overflow-visible drop-shadow-[0_0_16px_rgba(0,194,224,0.35)]"
           >
-            {/* White Geometric 'A' Frame */}
+            {/* White Geometric 'A' Apex Frame matching official geometry */}
             <path
-              d="M 60,10 L 15,102 L 38,102 L 60,54 L 82,102 L 105,102 Z"
+              d="M 60,10 L 110,110 L 84,110 L 60,54 L 36,110 L 10,110 Z"
               fill="#FFFFFF"
             />
             {/* Center Precision Pinpoint Circle */}
             <circle
               cx="60"
-              cy="74"
+              cy="78"
               r="9.5"
               fill="#00C2E0"
               className="animate-pulse"
