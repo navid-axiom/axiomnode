@@ -164,7 +164,7 @@ export default function LandingPage() {
             Evaluate Axiom Vision on Your Lot
           </h3>
           <p className="text-slate-200 text-sm max-w-lg mx-auto">
-            Contact us directly to request your pre-configured 30-day trial unit.
+            Contact us directly to request your pre-configured 14-day trial unit.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm font-mono pt-2">
             <a 
@@ -191,19 +191,19 @@ export default function LandingPage() {
               <span>⚡</span> Interactive Capacity Planner
             </div>
             <h2 className="text-2xl md:text-4xl font-extrabold font-['Montserrat',sans-serif] text-white tracking-tight">
-              30-Day "Blindspot" Pilot & Hardware Configurator
+              14-Day "Blindspot" Pilot & Hardware Configurator
             </h2>
             <p className="text-slate-300 text-sm md:text-base max-w-2xl mx-auto">
-              Select your lot's primary camera count. Free 30-day evaluation pilots cover up to <strong className="text-white underline decoration-[#00C2E0]">8 high-priority blindspot feeds</strong> on 1 Standard Node.
+              Select your lot's primary camera count. Free 14-day AI evaluation pilots cover up to <strong className="text-white underline decoration-[#00C2E0]">8 high-priority blindspot feeds</strong> on 1 Standard Node.
             </p>
           </div>
 
-          {/* Quick Select Preset Buttons */}
+          {/* Quick Select Preset Buttons (Ending at 30 Cams) */}
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             <span className="text-xs font-mono text-slate-400 uppercase mr-2 w-full text-center sm:w-auto">
               Quick Presets:
             </span>
-            {[4, 8, 12, 16, 24].map((count) => (
+            {[4, 8, 12, 16, 24, 30].map((count) => (
               <button
                 key={count}
                 onClick={() => setOrderCameraCount(count)}
@@ -246,19 +246,19 @@ export default function LandingPage() {
                   />
                   <div className="flex justify-between text-[11px] font-mono text-slate-400">
                     <span>1 Feed</span>
-                    <span className="text-[#00C2E0] font-bold">8 (Pilot Cap)</span>
+                    <span className="text-[#00C2E0] font-bold">8 (14-Day Free Cap)</span>
                     <span>30 Feeds</span>
                   </div>
                 </div>
 
-                {/* Eligibility Banner */}
-                {!isPilotEligible ? (
-                  <div className="p-4 bg-amber-950/60 border border-amber-500/50 rounded-xl text-xs font-mono text-amber-200 leading-relaxed">
-                    ⚠️ <strong>Pilot Evaluation Note:</strong> Free 30-day trials are capped at <strong>8 primary blindspot feeds</strong> ($500 Standard Node value). Sites with {orderCameraCount} feeds expand to post-trial commercial rates.
+                {/* Positive Eligibility / Setup Banner (Light Blue / Cyan) */}
+                {isPilotEligible ? (
+                  <div className="p-4 bg-[#00C2E0]/15 border border-[#00C2E0]/40 rounded-xl text-xs font-mono text-[#A7E8F3] leading-relaxed">
+                    ⚡ <strong>100% Free Software Trial Eligible:</strong> Evaluating <strong>{orderCameraCount} camera feeds</strong>. Fits completely inside your 14-day $0.00 software trial (+${currentTier.price} fully-refundable node deposit).
                   </div>
                 ) : (
                   <div className="p-4 bg-[#00C2E0]/15 border border-[#00C2E0]/40 rounded-xl text-xs font-mono text-[#A7E8F3] leading-relaxed">
-                    ⚡ <strong>100% Free Pilot Eligible:</strong> Evaluating <strong>{orderCameraCount} camera feeds</strong>. Fits completely inside your 30-day $0.00 evaluation trial.
+                    ✨ <strong>Expanded Commercial Setup:</strong> Evaluating <strong>{orderCameraCount} camera feeds</strong>. Larger lot deployments utilize the <strong>{currentTier.name}</strong> for specialized neural acceleration.
                   </div>
                 )}
               </div>
@@ -281,7 +281,7 @@ export default function LandingPage() {
 
             </div>
 
-            {/* Column 2: Visual Hardware Model Showcase (Unfiltered Clean Rendering) */}
+            {/* Column 2: Visual Hardware Model Showcase */}
             <div className="lg:col-span-4 bg-[#0D1830] p-6 rounded-2xl border border-[#1B325C] flex flex-col items-center justify-between text-center relative overflow-hidden group">
               <div className="w-full flex items-center justify-between text-[11px] font-mono text-slate-400 mb-2">
                 <span className="text-[#00C2E0] font-bold uppercase tracking-wider">
@@ -347,21 +347,24 @@ export default function LandingPage() {
                     <div className="text-4xl md:text-5xl font-extrabold font-['Montserrat',sans-serif] text-white">
                       $0.00
                     </div>
-                    <p className="text-xs font-mono text-slate-300">
-                      For 30 Days (Up to 8 cameras)
+                    <p className="text-xs font-mono text-[#A7E8F3] font-semibold">
+                      For 14 days up to 8 cameras
                     </p>
-                    <div className="inline-block mt-2 px-2.5 py-1 bg-emerald-950/80 text-emerald-400 border border-emerald-500/50 rounded text-[11px] font-mono font-bold">
-                      ✓ 100% Free Trial Verified
+                    <p className="text-[11px] font-mono text-slate-300 pt-0.5">
+                      + ${currentTier.price} refundable node deposit
+                    </p>
+                    <div className="inline-block mt-2 px-2.5 py-1 bg-[#00C2E0]/20 text-[#A7E8F3] border border-[#00C2E0]/50 rounded text-[11px] font-mono font-bold">
+                      ✓ 100% Free Software Trial
                     </div>
                   </div>
                 ) : (
                   <div className="space-y-1">
-                    <div className="text-3xl md:text-4xl font-extrabold font-['Montserrat',sans-serif] text-amber-300">
+                    <div className="text-3xl md:text-4xl font-extrabold font-['Montserrat',sans-serif] text-[#00C2E0]">
                       ${monthlyTotal}
                       <span className="text-xs font-normal text-slate-300"> / month</span>
                     </div>
-                    <p className="text-[11px] font-mono text-amber-200/90 pt-1">
-                      + ${currentTier.price} one-time hardware fee
+                    <p className="text-[11px] font-mono text-[#A7E8F3] pt-1">
+                      + ${currentTier.price} refundable node deposit
                     </p>
                   </div>
                 )}
@@ -370,7 +373,7 @@ export default function LandingPage() {
               {/* Cost Line Item Breakdown */}
               <div className="space-y-2 text-xs font-mono text-slate-300 border-t border-slate-700/60 pt-4">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Node Unit Cost:</span>
+                  <span className="text-slate-400">Refundable Deposit:</span>
                   <span className="text-white font-bold">${currentTier.price}</span>
                 </div>
                 <div className="flex justify-between">
@@ -393,6 +396,21 @@ export default function LandingPage() {
             </div>
 
           </div>
+
+          {/* Refundable Deposit & Evaluation Pitch Guarantee Box */}
+          <div className="p-5 bg-[#0D1830] border border-[#00C2E0]/40 rounded-2xl text-xs font-mono text-slate-200 leading-relaxed space-y-2">
+            <p className="text-[#00C2E0] font-bold text-sm">
+              🛡️ How the 14-Day Free Trial & Hardware Deposit Works:
+            </p>
+            <p>
+              The <strong>14-day AI software evaluation is 100% free</strong>. We collect a standard hardware deposit (<strong className="text-white">${currentTier.price}</strong> for {currentTier.name}) to cover the physical edge node device sent to your site. 
+            </p>
+            <p className="text-[#A7E8F3]">
+              • If you convert to an annual subscription, <strong>100% of your deposit is credited directly toward your first year's contract</strong>.<br />
+              • If you choose to return the hardware at the end of the 14 days, <strong>your deposit is 100% refunded</strong>.
+            </p>
+          </div>
+
         </section>
 
       </main>
