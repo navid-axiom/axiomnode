@@ -55,6 +55,9 @@ export default function LandingPage() {
   const [vslDriveUrl] = useState<string>(
     "https://drive.google.com/file/d/1tMn3APA6GkphOBsGpVnVyxSYSKfbqVqr/preview"
   );
+  const [vslDirectUrl] = useState<string>(
+    "https://drive.google.com/file/d/1tMn3APA6GkphOBsGpVnVyxSYSKfbqVqr/view?usp=sharing"
+  );
   const [imgError, setImgError] = useState<Record<string, boolean>>({});
   const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
 
@@ -145,15 +148,54 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* Video Player Card (Click to Play Lightbox Modal) */}
+        {/* Video Player Card (With Realistic Security Thumbnail Overlay & Lightbox Trigger) */}
         <div 
           onClick={() => setIsVideoModalOpen(true)}
-          className="relative aspect-video max-w-4xl mx-auto w-full bg-[#0A1328] border-2 border-[#00C2E0]/50 rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(0,194,224,0.25)] group cursor-pointer"
+          className="relative aspect-video max-w-4xl mx-auto w-full bg-[#0A1328] border-2 border-[#00C2E0]/60 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,194,224,0.3)] group cursor-pointer"
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-[#070D1D] via-[#0A1328]/70 to-black/40 flex flex-col items-center justify-center gap-4 transition-all duration-300 group-hover:bg-black/30">
-            <div className="h-20 w-20 rounded-full bg-[#00C2E0] text-[#070D1D] flex items-center justify-center font-bold text-3xl shadow-[0_0_35px_rgba(0,194,224,0.8)] group-hover:scale-110 transition-transform duration-300">
-              ▶
+          {/* High-Tech Tactical Surveillance Camera Graphic / Poster */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0D1B36] via-[#081226] to-[#050B1A] flex flex-col justify-between p-4 md:p-8">
+            
+            {/* Camera Overlay Top Bar */}
+            <div className="flex items-center justify-between font-mono text-[11px] md:text-xs text-slate-300 z-10">
+              <div className="flex items-center gap-2 bg-[#070D1D]/80 px-3 py-1.5 rounded-lg border border-[#162B4D]">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-500 animate-ping" />
+                <span className="text-red-400 font-bold uppercase tracking-wider">REC 🔴 LIVE DEMO</span>
+              </div>
+              <div className="hidden sm:block text-[#00C2E0] bg-[#070D1D]/80 px-3 py-1.5 rounded-lg border border-[#162B4D]">
+                CAM_01 • NORTH PERIMETER FENCE
+              </div>
             </div>
+
+            {/* AI Bounding Box & Target Graphic */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40 group-hover:opacity-70 transition duration-300">
+              <div className="w-64 h-64 border-2 border-dashed border-[#00C2E0] rounded-2xl relative flex items-center justify-center">
+                <div className="absolute top-2 left-2 text-[10px] font-mono text-[#00C2E0] bg-[#070D1D] px-1.5 py-0.5 rounded">
+                  HUMAN THREAT CONFIRMED (98.4%)
+                </div>
+                <div className="w-4 h-4 border-t-2 border-l-2 border-[#00C2E0] absolute -top-1 -left-1" />
+                <div className="w-4 h-4 border-t-2 border-r-2 border-[#00C2E0] absolute -top-1 -right-1" />
+                <div className="w-4 h-4 border-b-2 border-l-2 border-[#00C2E0] absolute -bottom-1 -left-1" />
+                <div className="w-4 h-4 border-b-2 border-r-2 border-[#00C2E0] absolute -bottom-1 -right-1" />
+              </div>
+            </div>
+
+            {/* Center Play Button Overlay */}
+            <div className="z-10 flex flex-col items-center justify-center gap-3 my-auto">
+              <div className="h-20 w-20 rounded-full bg-[#00C2E0] text-[#070D1D] flex items-center justify-center font-bold text-3xl shadow-[0_0_40px_rgba(0,194,224,0.9)] group-hover:scale-110 transition-transform duration-300">
+                ▶
+              </div>
+              <span className="text-white font-['Montserrat',sans-serif] font-bold text-sm md:text-base tracking-wide bg-[#070D1D]/90 px-4 py-1.5 rounded-full border border-[#00C2E0]/50 shadow-lg">
+                Click to Watch 45-Second Demo Video
+              </span>
+            </div>
+
+            {/* Camera Overlay Bottom Bar */}
+            <div className="flex items-center justify-between font-mono text-[10px] md:text-xs text-slate-400 z-10">
+              <span>CORESIGHT AI ENGINE v1.2</span>
+              <span className="text-[#A7E8F3]">VERIFIED EDGE DISPATCH</span>
+            </div>
+
           </div>
         </div>
 
@@ -415,7 +457,7 @@ export default function LandingPage() {
 
       </main>
 
-      {/* POP-OUT VIDEO LIGHTBOX MODAL */}
+      {/* POP-OUT VIDEO LIGHTBOX MODAL (Optimized for Mobile & Desktop) */}
       {isVideoModalOpen && (
         <div 
           onClick={() => setIsVideoModalOpen(false)}
@@ -438,15 +480,28 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Video Container */}
-            <div className="bg-black w-full flex-1 flex items-center justify-center min-h-[300px] overflow-hidden">
+            {/* Pure Uncropped Video Container */}
+            <div className="bg-black w-full flex-1 flex flex-col items-center justify-center min-h-[300px] overflow-hidden relative">
               <iframe
-                src={vslDriveUrl.includes("?") ? `${vslDriveUrl}&autoplay=1` : `${vslDriveUrl}?autoplay=1`}
-                className="w-full aspect-video border-0 max-h-[75vh]"
+                src={vslDriveUrl}
+                className="w-full aspect-video border-0 max-h-[70vh]"
                 allow="autoplay; fullscreen"
                 allowFullScreen
                 title="Axiom Vision Overview Demo"
               />
+
+              {/* Direct Mobile Stream Link Fallback for Mobile Browsers */}
+              <div className="p-3 bg-[#070D1D] w-full border-t border-[#1B325C] flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-300">
+                <span>📱 Having trouble playing inside your mobile browser?</span>
+                <a
+                  href={vslDirectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1 bg-[#00C2E0] text-[#070D1D] font-extrabold rounded-lg hover:bg-[#A7E8F3] transition flex items-center gap-1 shadow-md"
+                >
+                  ▶ Open Video Directly ↗
+                </a>
+              </div>
             </div>
           </div>
         </div>
